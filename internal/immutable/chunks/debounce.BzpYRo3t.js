@@ -1,0 +1,1 @@
+const i=()=>{};function T(r,s=0,u={}){let l=!1,n=null,e=null;const a=u.before||i,d=u.after||i;function f(){return n!==null?(clearTimeout(n),n=null,!0):!1}function c(){f()&&(e=null),l=!1}function b(){e!==null&&(e(),e=null),c()}const t=function(...m){const h=this;function o(){r.apply(h,m),d()}l||(l=!0,a()),e=o,f(),n=setTimeout(o,s)};return t.cancel=c,t.flush=b,t}export{T as d};

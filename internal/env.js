@@ -1,0 +1,1 @@
+export const env={"PUBLIC_URL":"https://aicacia.github.io/ipcameras"}

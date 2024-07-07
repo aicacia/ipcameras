@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="icon" href="./favicon.png" />
+		<link rel="manifest" crossorigin="use-credentials" href="./manifest.json" />
+		<meta name="description" content="IPCameras" />
+		<meta name="keywords" content="aicacia, ipcameras" />
+		<meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1" />
+		
+		<link rel="modulepreload" href="./internal/immutable/entry/start.MHBwB0P-.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/entry.ngq7JtPT.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/scheduler.Bu9aYH8f.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/index.BupekJpF.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/paths.Boo_zllB.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/control.CYgJF_JY.js">
+		<link rel="modulepreload" href="./internal/immutable/entry/app.CFfwx7Z9.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/preload-helper.D6kgxu3v.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/index.QYv70b3f.js">
+	</head>
+	<body>
+		<div style="display: contents">
+			<script>
+				{
+					__sveltekit_1kqkh1y = {
+						base: new URL(".", location).pathname.slice(0, -1),
+						assets: "/ipcameras"
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("./internal/immutable/entry/start.MHBwB0P-.js"),
+						import("./internal/immutable/entry/app.CFfwx7Z9.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+
+					if ('serviceWorker' in navigator) {
+						addEventListener('load', function () {
+							navigator.serviceWorker.register('./service-worker.js');
+						});
+					}
+				}
+			</script>
+		</div>
+	</body>
+</html>
