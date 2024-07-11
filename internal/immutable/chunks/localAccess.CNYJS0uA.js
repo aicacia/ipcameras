@@ -1,1 +1,0 @@
-import{l as e}from"./localstorageWritable.DviM0pTl.js";import{d as c}from"./index.BupekJpF.js";import{e as t}from"./scheduler.Bu9aYH8f.js";const o=e("remote-access",null),r=c(o,s=>s);function u(){return t(r)}function A(s){o.set(s)}const a=e("local-access",null),l=c(a,s=>s);function f(){return t(l)}function g(s){a.set(s)}export{f as a,g as b,u as g,l,r,A as s};

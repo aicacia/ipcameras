@@ -1,0 +1,1 @@
+import{l as c}from"./localstorageWritable.DviM0pTl.js";import{d as t}from"./index.BupekJpF.js";import{e}from"./scheduler.Bu9aYH8f.js";const a=c("p2p-access",null),r=t(a,s=>s);function u(){return e(r)}function A(s){a.set(s)}const o=c("local-access",null),n=t(o,s=>s);function f(){return e(n)}function m(s){o.set(s)}export{f as a,m as b,u as g,n as h,r as p,A as s};
