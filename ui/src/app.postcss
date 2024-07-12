@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	* {
+		min-width: 0;
+	}
+
+	* {
+		scrollbar-width: thin;
+	}
+	*::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	*::-webkit-scrollbar-track {
+		margin-top: 2px;
+		margin-bottom: 2px;
+		border-radius: 4px;
+	}
+	*::-webkit-scrollbar-thumb {
+		border-radius: 4px;
+	}
+
+	* {
+		scrollbar-color: theme('colors.gray.300') theme('colors.white');
+	}
+	.dark * {
+		scrollbar-color: theme('colors.gray.700') theme('colors.gray.900');
+	}
+	*::-webkit-scrollbar-track {
+		background: theme('colors.gray.300');
+	}
+	.dark *::-webkit-scrollbar-track {
+		background: theme('colors.gray.700');
+	}
+	*::-webkit-scrollbar-thumb {
+		background-color: theme('colors.white');
+		border: 1px solid theme('colors.gray.200');
+	}
+	.dark *::-webkit-scrollbar-thumb {
+		background-color: theme('colors.gray.900');
+		border: 1px solid theme('colors.gray.600');
+	}
+
+	html,
+	body {
+		@apply relative flex h-full w-full flex-col
+			overflow-hidden bg-gray-100
+			text-gray-950 dark:bg-gray-900 dark:text-white;
+	}
+
+	input,
+	select,
+	textarea {
+		@apply border border-gray-300
+			bg-gray-100 px-3 py-1
+			text-sm text-gray-950
+			outline-none focus:outline-none dark:border-gray-900
+			dark:bg-gray-700 dark:text-white;
+	}
+	select {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		background-repeat: no-repeat;
+		background-position: right 0px top 50%;
+		background-size: 24px;
+		background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgoNPHJlY3QgeD0iMCIgZmlsbD0ibm9uZSIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ii8+Cg08Zz4KDTxwYXRoIGQ9Ik03IDEwbDUgNSA1LTUiLz4KDTwvZz4KDTwvc3ZnPg==);
+		@apply pe-6;
+	}
+	input[disabled],
+	select[disabled],
+	textarea[disabled] {
+		@apply cursor-not-allowed opacity-50;
+	}
+	input[type='checkbox'] {
+		@apply mx-1 text-gray-950;
+	}
+	textarea {
+		@apply resize-y;
+	}
+
+	input.invalid,
+	select.invalid,
+	textarea.invalid {
+		@apply border-red-600 placeholder-red-600;
+	}
+	input.valid,
+	select.valid,
+	textarea.valid {
+		@apply border-green-600 placeholder-green-600;
+	}
+	input.warning,
+	select.warning,
+	textarea.warning {
+		@apply border-orange-600 placeholder-orange-600;
+	}
+	input.untested,
+	select.untested,
+	textarea.untested {
+		@apply border-gray-600 placeholder-gray-600;
+	}
+
+	h1 {
+		@apply text-5xl;
+	}
+	h2 {
+		@apply text-4xl;
+	}
+	h3 {
+		@apply text-3xl;
+	}
+	h4 {
+		@apply text-2xl;
+	}
+	h5 {
+		@apply text-xl;
+	}
+	h6 {
+		@apply text-lg;
+	}
+
+	a {
+		@apply text-blue-500 no-underline dark:text-blue-300;
+	}
+	a:visited {
+		@apply text-blue-700 no-underline dark:text-blue-500;
+	}
+	a.default {
+		@apply text-gray-950 no-underline dark:text-white;
+	}
+}
+
+@layer components {
+	.btn {
+		@apply cursor-pointer px-3 py-1
+			text-center text-base font-bold uppercase
+			no-underline outline-none
+			transition-all duration-150 ease-linear focus:outline-none;
+	}
+	.btn[disabled] {
+		@apply cursor-not-allowed opacity-50;
+	}
+	.btn.primary {
+		@apply bg-blue-500 !text-white hover:bg-blue-700;
+	}
+	.btn.primary.active {
+		@apply bg-blue-700;
+	}
+	.btn.secondary {
+		@apply bg-white !text-gray-950 hover:bg-gray-200;
+	}
+	.btn.secondary.active {
+		@apply bg-gray-200;
+	}
+	.btn.danger {
+		@apply bg-red-500 !text-white hover:bg-red-700;
+	}
+	.btn.danger.active {
+		@apply bg-red-700;
+	}
+	.btn.sm {
+		@apply text-xs;
+	}
+	.btn.icon {
+		@apply p-1;
+	}
+	.btn.borderless {
+		@apply border-none shadow-none;
+	}
+
+	.badge {
+		@apply flex flex-shrink flex-row content-center items-center px-2 py-1 text-xs font-medium;
+	}
+	.badge .btn {
+		@apply p-0;
+	}
+
+	.badge.gray {
+		@apply bg-gray-300 text-gray-900;
+	}
+	.badge.green {
+		@apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300;
+	}
+	.badge.blue {
+		@apply bg-mulberry-wood-100 text-mulberry-wood-900 dark:text-mulberry-wood-300 dark:bg-blue-900;
+	}
+	.badge.yellow {
+		@apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300;
+	}
+	.badge.orange {
+		@apply bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300;
+	}
+	.badge.red {
+		@apply bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300;
+	}
+}

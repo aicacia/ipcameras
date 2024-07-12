@@ -1,0 +1,56 @@
+server {
+  listen 80;
+
+  gzip on;
+  gzip_min_length 256;
+  gzip_disable "msie6";
+  gzip_types
+      application/atom+xml
+      application/geo+json
+      application/javascript
+      application/x-javascript
+      application/json
+      application/ld+json
+      application/manifest+json
+      application/rdf+xml
+      application/rss+xml
+      application/xhtml+xml
+      application/xml
+      font/eot
+      font/otf
+      font/ttf
+      image/svg+xml
+      text/css
+      text/javascript
+      text/plain
+      text/xml;
+
+  root /usr/share/nginx/html;
+  index index.html;
+
+  location / {
+    try_files $uri $uri/ $uri.html /index.html;
+    expires off;
+    add_header Cache-Control "no-store, no-cache, must-revalidate";
+  }
+
+  location /health {
+    allow               all;
+    return              200;
+  }
+
+  location = /service-worker.js {
+    expires off;
+    add_header Cache-Control "no-store, no-cache, must-revalidate";
+  }
+  location = /manifest.json {
+    expires off;
+    add_header Cache-Control "no-store, no-cache, must-revalidate";
+  }
+
+  location ~* \.(?:css|js|jpg|jpeg|png|webp|svg|json)$ {
+    expires 7d;
+    add_header Cache-Control "public";
+  }
+}
+

@@ -1,0 +1,63 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  test:
+    if: ${{ 'true' == 'false' }}
+    runs-on: ubuntu-latest
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@localhost/ipcameras-dev?sslmode=disable
+    services:
+      postgres:
+        image: postgres:15-alpine3.18
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+          cache-dependency-path: go.sum
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-all-crates: true
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 22
+      - run: npm install -g pnpm@9
+
+      - run: go install github.com/playwright-community/playwright-go/cmd/playwright@latest
+      - run: playwright install chromium
+
+      - working-directory: ./api
+        run: go mod download
+      - working-directory: ./api
+        run: go run main.go &
+      - run: npx wait-on tcp:3000
+
+      - working-directory: ./ui
+        run: pnpm install
+      - working-directory: ./ui
+        run: pnpm build
+      - working-directory: ./ui
+        run: pnpm preview &
+      - run: npx wait-on tcp:5173
+
+      - run: go test -v ./integration

@@ -1,0 +1,33 @@
+name: Web
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  pages:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    env:
+      USE_BASE_PATH: true
+      PUBLIC_URL: https://aicacia.github.io/ipcameras
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 22
+
+      - working-directory: ./ui
+        run: npm install -g pnpm@9
+      - working-directory: ./ui
+        run: pnpm install
+      - working-directory: ./ui
+        run: echo "PUBLIC_URL=${PUBLIC_URL}" >> .env
+      - working-directory: ./ui
+        run: NODE_ENV=production pnpm build
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ui/build

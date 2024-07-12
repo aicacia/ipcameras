@@ -1,0 +1,83 @@
+version: '3'
+
+env:
+  APP_ENV: '{{default "dev" .APP_ENV}}'
+  API_VERSION: '{{default "0.1.0" .API_VERSION}}'
+  UI_VERSION: '{{default "0.1.0" .UI_VERSION}}'
+
+dotenv: ['.env.{{.APP_ENV}}', '.env']
+
+tasks:
+  db-up:
+    cmds:
+      - docker compose up -d
+  db-down:
+    cmds:
+      - docker compose down
+
+  install:
+    cmds:
+      - go install github.com/swaggo/swag/cmd/swag@latest
+      - go install github.com/mitranim/gow@latest
+      - go install github.com/playwright-community/playwright-go/cmd/playwright@latest
+      - playwright install --with-deps chromium
+  
+  openapi:
+    deps: 
+      - api-openapi
+      - ui-openapi
+
+  ui:
+    dir: ui
+    cmds:
+      - pnpm install
+      - pnpm run start
+  ui-openapi:
+    dir: ui
+    cmds:
+      - pnpm run openapi
+  ui-build: 
+    dir: ui
+    cmds:
+      - pnpm run build
+  ui-docker:
+    dir: ui
+    cmds:
+      - docker build -t github.com/aicacia/ipcameras-ui:${UI_VERSION} .
+
+  api-openapi:
+    dir: api
+    cmds:
+      - swag init
+  api:
+    dir: api
+    deps: [api-openapi]
+    cmds:
+      - go mod download
+      - gow -v run *.go
+  api-docker:
+    dir: api
+    deps: [api-openapi]
+    cmds:
+      - docker build -t github.com/aicacia/ipcameras-api:${API_VERSION} .
+  api-build:
+    dir: api
+    deps: [api-openapi]
+    cmds:
+      - env GOARCH=${GOARCH} GOOS=${GOOS} go build -ldflags "-s -w -X main.Version=${API_VERSION} -X main.Build=${TIMESTAMP}" -o ipcameras-api
+    vars:
+      # https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63#goarch-values
+      GOARCH: amd64
+      # https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63#goos-values
+      GOOS: linux
+      TIMESTAMP:
+        sh: date +%s
+  
+  test:
+    dir: integration
+    cmds:
+      - go test -v
+
+  p2p:
+    cmds:
+      - docker run -e JWT_SECRET="$(cat ./api/config.json | jq -r .p2p.jwtSecret)" -p 4000:4000 -d aicacia/api-p2p:latest

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: { { include "ipcameras.fullname" . } }
+  labels: { { - include "ipcameras.labels" . | nindent 4 } }
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector: { { - include "ipcameras.selectorLabels" . | nindent 4 } }

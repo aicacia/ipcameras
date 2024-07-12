@@ -1,0 +1,13 @@
+.DS_Store
+.history
+/.vscode/
+/certs/
+/log/
+/build-binary.sh
+/Dockerfile
+/Makefile
+/orion-live.log
+/orion-live.tar
+/orionlive
+.env*
+!.env.example

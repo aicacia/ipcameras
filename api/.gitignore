@@ -1,0 +1,14 @@
+.DS_Store
+/out/
+/certs/
+/.vscode/
+/log/
+/html
+/cameras/
+/ipcameras-api
+/ipcameras-api.tar
+/.task
+.env*
+!.env.example
+.history
+config.json

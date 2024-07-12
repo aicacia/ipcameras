@@ -1,0 +1,17 @@
+.DS_Store
+node_modules
+/.svelte-kit
+/.vscode
+/build
+/prebuild
+/functions
+/package
+build.pem
+.env*
+!.env.example
+/values.yaml
+
+# openapi
+.openapi-generator
+.openapi-generator-ignore
+openapitools.json

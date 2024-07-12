@@ -1,0 +1,235 @@
+basePath: /
+definitions:
+  Camera:
+    properties:
+      createdAt:
+        format: date-time
+        type: string
+      discovered:
+        type: boolean
+      hardwareId:
+        type: string
+      mediaUris:
+        additionalProperties:
+          type: string
+        type: object
+      name:
+        type: string
+      record:
+        type: boolean
+      recordWindow:
+        type: integer
+      saved:
+        type: boolean
+      updatedAt:
+        format: date-time
+        type: string
+    required:
+    - discovered
+    - hardwareId
+    - mediaUris
+    - name
+    - record
+    - saved
+    - updatedAt
+    type: object
+  ErrorMessage:
+    properties:
+      error:
+        type: string
+      parameters:
+        items: {}
+        type: array
+    required:
+    - error
+    - parameters
+    type: object
+  Errors:
+    properties:
+      errors:
+        additionalProperties:
+          items:
+            $ref: '#/definitions/ErrorMessage'
+          type: array
+        type: object
+    required:
+    - errors
+    type: object
+  Health:
+    properties:
+      date:
+        format: date-time
+        type: string
+    required:
+    - date
+    type: object
+  P2PAccess:
+    properties:
+      host:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      ssl:
+        type: boolean
+    required:
+    - host
+    - id
+    - password
+    - ssl
+    type: object
+  UpsertCamera:
+    type: object
+  Version:
+    properties:
+      build:
+        type: string
+      version:
+        type: string
+    required:
+    - build
+    - version
+    type: object
+info:
+  contact:
+    email: nathanfaucett@gmail.com
+    name: Nathan Faucett
+  description: IPCameras API API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: IPCameras API
+paths:
+  /cameras:
+    get:
+      consumes:
+      - application/json
+      operationId: cameras
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/Camera'
+            type: array
+      summary: Get all cameras
+      tags:
+      - camera
+  /cameras/{hardwareId}:
+    get:
+      consumes:
+      - application/json
+      operationId: cameraByHardwareId
+      parameters:
+      - description: Hardware Id
+        in: path
+        name: hardwareId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Camera'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Errors'
+      summary: Get camera by hardware id
+      tags:
+      - camera
+    patch:
+      consumes:
+      - application/json
+      operationId: updateCameraByHardwareId
+      parameters:
+      - description: Hardware Id
+        in: path
+        name: hardwareId
+        required: true
+        type: string
+      - description: Camera
+        in: body
+        name: updates
+        required: true
+        schema:
+          $ref: '#/definitions/UpsertCamera'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Camera'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Errors'
+      summary: update camera by hardware id
+      tags:
+      - camera
+  /health:
+    get:
+      consumes:
+      - application/json
+      operationId: healthCheck
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Health'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Health'
+      summary: Get Health Check
+      tags:
+      - app
+  /p2p-access:
+    get:
+      consumes:
+      - application/json
+      operationId: p2pAccess
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/P2PAccess'
+      summary: Get p2p access info
+      tags:
+      - app
+  /version:
+    get:
+      consumes:
+      - application/json
+      operationId: version
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Version'
+      summary: Get Version
+      tags:
+      - app
+securityDefinitions:
+  Authorization:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+  TenentId:
+    in: header
+    name: Tenent-Id
+    type: apiKey
+swagger: "2.0"

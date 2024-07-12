@@ -1,0 +1,20 @@
+{
+	"name": "IPCameras",
+	"short_name": "IPCameras",
+	"description": "IPCameras: The IP Camera App",
+	"version": "1.0",
+	"manifest_version": 3,
+	"icons": [
+		{
+			"src": "/ipcameras/icon256x256.png",
+			"sizes": "256x256",
+			"type": "image/png"
+		}
+	],
+	"id": "/ipcameras/?source=pwa",
+	"start_url": "/ipcameras/?source=pwa",
+	"scope": "/ipcameras",
+	"display": "standalone",
+	"background_color": "#111827",
+	"theme_color": "#3A82F7"
+}

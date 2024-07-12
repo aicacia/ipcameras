@@ -1,0 +1,44 @@
+replicas:
+  min: 1
+  max: 8
+  resource:
+    cpu:
+      utilization: 90
+    memory:
+      utilization: 90
+  scaleDown:
+    stabilizationWindowSeconds: 30
+  scaleUp:
+    stabilizationWindowSeconds: 15
+
+image:
+  repository: ghcr.io/aicacia/ipcameras
+  tag: latest
+  pullPolicy: Always
+  pullSecrets: github-registry
+  hash: sha256:13ba025b6c186da3fdce3db68f192721fef8300ae02f2ae76c953d771b7180e4
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/tls-acme: 'true'
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/from-to-www-redirect: 'true'
+  hosts:
+    - host: ipcameras.aicacia.com
+      paths:
+        - /
+  tls:
+    - secretName: ipcameras-aicacia-com-tls
+      hosts:
+        - ipcameras.aicacia.com
+        - www.ipcameras.aicacia.com
+
+resources:
+  requests:
+    cpu: 80m
+    memory: 128M
+  limits:
+    cpu: 250m
+    memory: 512M
