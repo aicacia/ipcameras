@@ -29,6 +29,10 @@ type CamerasST struct {
 	Path string `json:"path"`
 }
 
+type UsersST struct {
+	Path string `json:"path"`
+}
+
 type DiscoveryST struct {
 	Enabled                   bool  `json:"enabled"`
 	RemoveTimeoutMilliseconds int64 `json:"removeTimeoutMilliseconds"`
@@ -55,8 +59,9 @@ type RTSPST struct {
 }
 
 type JWTST struct {
-	Secret           string `json:"secret"`
-	ExpiresInSeconds int    `json:"expiresInSeconds"`
+	Secret                  string `json:"secret"`
+	ExpiresInSeconds        int64  `json:"expiresInSeconds"`
+	RefreshExpiresInSeconds int64  `json:"refreshExpiresInSeconds"`
 }
 
 type ConfigST struct {
@@ -66,6 +71,7 @@ type ConfigST struct {
 	Dashboard DashboardST `json:"dashboard"`
 	OpenAPI   OpenAPIST   `json:"openapi"`
 	Cameras   CamerasST   `json:"cameras"`
+	Users     UsersST     `json:"users"`
 	Discovery DiscoveryST `json:"discovery"`
 	P2P       P2PST       `json:"p2p"`
 	Ice       IceST       `json:"ice"`
@@ -106,7 +112,13 @@ func InitConfig(path string) error {
 			Enabled: true,
 		},
 		Cameras: CamerasST{
-			Path: "./cameras",
+			Path: "./data/cameras",
+		},
+		Users: UsersST{
+			Path: "./data/users",
+		},
+		Ice: IceST{
+			Servers: []string{"stun:stun.l.google.com:19302"},
 		},
 		Discovery: DiscoveryST{Enabled: true, RemoveTimeoutMilliseconds: 60000},
 		P2P: P2PST{
@@ -119,7 +131,8 @@ func InitConfig(path string) error {
 			Debug:                 true,
 		},
 		JWT: JWTST{
-			ExpiresInSeconds: 3600,
+			ExpiresInSeconds:        86400,
+			RefreshExpiresInSeconds: 604800,
 		},
 	}
 	err = json.Unmarshal(configBytes, &c)

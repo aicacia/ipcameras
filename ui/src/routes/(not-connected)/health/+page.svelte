@@ -15,7 +15,7 @@
 	>
 		<h1 class="text-center">{$LL.health.header()}</h1>
 		<p class="py-2 text-center">
-			<a href={`${base}/signin`}>{$LL.ipcameras.signIn()}</a>
+			<a href={`${base}/signin`}>{$LL.auth.signIn()}</a>
 		</p>
 	</div>
 </div>

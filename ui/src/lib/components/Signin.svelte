@@ -3,28 +3,20 @@
 <script lang="ts" context="module">
 	import { create, test, enforce, only } from 'vest';
 
-	type SignInForm = {
-		host: string;
-		ssl: boolean;
-		id: string;
+	type SigninForm = {
+		username: string;
 		password: string;
 	};
 
 	const createSuite = (LL: TranslationFunctions) =>
-		create((data: Partial<SignInForm> = {}, fields: string[]) => {
+		create((data: Partial<SigninForm> = {}, fields: string[]) => {
 			if (!fields.length) {
 				return;
 			}
 			only(fields);
 
-			test('host', LL.errors.message.required(), () => {
-				enforce(data.host).isNotBlank();
-			});
-			test('ssl', LL.errors.message.required(), () => {
-				enforce(data.ssl).isNotBlank();
-			});
-			test('id', LL.errors.message.required(), () => {
-				enforce(data.id).isNotBlank();
+			test('username', LL.errors.message.required(), () => {
+				enforce(data.username).isNotBlank();
 			});
 			test('password', LL.errors.message.required(), () => {
 				enforce(data.password).isNotBlank();
@@ -40,17 +32,13 @@
 	import { debounce } from '@aicacia/debounce';
 	import InputResults from '$lib/components/InputResults.svelte';
 	import type { TranslationFunctions } from '$lib/i18n/i18n-types';
-	import type { P2P } from '$lib/openapi/ipcameras';
+	import { signIn } from '$lib/stores/user';
 	import type { MaybePromise } from '@sveltejs/kit';
-	import { createAccessJWT } from '$lib/peer';
-	import { p2pAccess, setP2PAccess } from '$lib/stores/p2pAccess';
 
-	export let onSignin: (p2pAccess: P2P) => MaybePromise<void>;
+	export let onSignin: () => MaybePromise<void>;
 
-	$: host = $p2pAccess?.host || 'p2p.aicacia.com';
-	$: ssl = $p2pAccess?.ssl === false ? false : true;
-	$: id = $p2pAccess?.id || '';
-	$: password = $p2pAccess?.password || '';
+	let username = '';
+	let password = '';
 
 	$: suite = createSuite($LL);
 	$: result = suite.get();
@@ -65,15 +53,13 @@
 
 	const fields = new Set<string>();
 	const validate = debounce(() => {
-		suite({ host, ssl, id, password }, Array.from(fields)).done((r) => {
+		suite({ username, password }, Array.from(fields)).done((r) => {
 			result = r;
 		});
 		fields.clear();
 	}, 300);
 	function validateAll() {
-		fields.add('host');
-		fields.add('ssl');
-		fields.add('id');
+		fields.add('username');
 		fields.add('password');
 		validate();
 		validate.flush();
@@ -90,10 +76,8 @@
 			loading = true;
 			validateAll();
 			if (result.isValid()) {
-				const p2pAccess = { host, ssl, id, password };
-				await createAccessJWT(p2pAccess);
-				setP2PAccess(p2pAccess);
-				await onSignin(p2pAccess);
+				await signIn(username, password);
+				await onSignin();
 			}
 		} catch (error) {
 			await handleError(error);
@@ -105,42 +89,23 @@
 
 <form on:submit|preventDefault={onSubmit}>
 	<div class="mb-2">
-		<label for="host">{$LL.auth.hostLabel()}</label>
+		<label for="username">{$LL.auth.usernameLabel()}</label>
 		<input
-			class="w-full {cn('host')}"
+			class="w-full {cn('username')}"
 			type="text"
-			name="host"
-			placeholder={$LL.auth.hostPlaceholder()}
-			bind:value={host}
+			name="username"
+			placeholder={$LL.auth.usernamePlaceholder()}
+			bind:value={username}
 			on:input={onChange}
 		/>
-		<InputResults name="host" {result} />
+		<InputResults name="username" {result} />
 	</div>
 	<div class="mb-2">
-		<label for="ssl">{$LL.auth.sslLabel()}</label>
-		<input class={cn('ssl')} type="checkbox" name="ssl" bind:checked={ssl} on:input={onChange} />
-		<InputResults name="ssl" {result} />
-	</div>
-	<div class="mb-2">
-		<label for="host">{$LL.auth.idLabel()}</label>
-		<input
-			class="w-full {cn('id')}"
-			type="text"
-			name="id"
-			autocomplete="username"
-			placeholder={$LL.auth.idPlaceholder()}
-			bind:value={id}
-			on:input={onChange}
-		/>
-		<InputResults name="id" {result} />
-	</div>
-	<div class="mb-2">
-		<label for="host">{$LL.auth.passwordLabel()}</label>
+		<label for="username">{$LL.auth.passwordLabel()}</label>
 		<input
 			class="w-full {cn('password')}"
 			type="password"
 			name="password"
-			autocomplete="current-password"
 			placeholder={$LL.auth.passwordPlaceholder()}
 			bind:value={password}
 			on:input={onChange}

@@ -10,6 +10,7 @@ import (
 
 	"github.com/aicacia/ipcameras/api/app/config"
 	"github.com/aicacia/ipcameras/api/app/model"
+	"github.com/aicacia/ipcameras/api/app/repo"
 	"github.com/aicacia/ipcameras/api/app/service"
 	"github.com/aicacia/ipcameras/api/docs"
 	"github.com/gofiber/fiber/v2"
@@ -52,6 +53,10 @@ func InitApp(appConfig AppConfigST) *fiber.App {
 	err = service.InitDiscovery()
 	if err != nil {
 		log.Fatalf("error initializing discovery: %v\n", err)
+	}
+	err = repo.InitUsers()
+	if err != nil {
+		log.Fatalf("error initializing users: %v\n", err)
 	}
 
 	Version.Version = appConfig.Version

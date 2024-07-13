@@ -32,9 +32,12 @@ var args struct {
 // @in header
 // @name Authorization
 // @description Type "Bearer" followed by a space and JWT token.
-// @securityDefinitions.apikey TenentId
+// @securityDefinitions.apikey Locale
 // @in header
-// @name Tenent-Id
+// @name X-Locale
+// @securityDefinitions.apikey Timezone
+// @in header
+// @name X-Timezone
 func main() {
 	defer func() {
 		rec := recover()

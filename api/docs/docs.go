@@ -24,6 +24,11 @@ const docTemplate = `{
     "paths": {
         "/cameras": {
             "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -50,6 +55,11 @@ const docTemplate = `{
         },
         "/cameras/{hardwareId}": {
             "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -60,7 +70,7 @@ const docTemplate = `{
                     "camera"
                 ],
                 "summary": "Get camera by hardware id",
-                "operationId": "cameraByHardwareId",
+                "operationId": "camera-by-hardware-id",
                 "parameters": [
                     {
                         "type": "string",
@@ -86,6 +96,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -96,7 +111,7 @@ const docTemplate = `{
                     "camera"
                 ],
                 "summary": "update camera by hardware id",
-                "operationId": "updateCameraByHardwareId",
+                "operationId": "update-camera-by-hardware-id",
                 "parameters": [
                     {
                         "type": "string",
@@ -143,7 +158,7 @@ const docTemplate = `{
                     "app"
                 ],
                 "summary": "Get Health Check",
-                "operationId": "healthCheck",
+                "operationId": "health-check",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -162,6 +177,11 @@ const docTemplate = `{
         },
         "/p2p-access": {
             "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -172,12 +192,182 @@ const docTemplate = `{
                     "app"
                 ],
                 "summary": "Get p2p access info",
-                "operationId": "p2pAccess",
+                "operationId": "p2p-access",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/P2PAccess"
+                        }
+                    }
+                }
+            }
+        },
+        "/token": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "token"
+                ],
+                "summary": "create a token by authenticating a user",
+                "operationId": "token",
+                "parameters": [
+                    {
+                        "description": "user credentials",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Credentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/Token"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "current-user"
+                ],
+                "summary": "Get current user",
+                "operationId": "current-user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/reset-password": {
+            "patch": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "current-user"
+                ],
+                "summary": "Resets a user's password",
+                "operationId": "reset-password",
+                "parameters": [
+                    {
+                        "description": "reset user's password",
+                        "name": "resetPassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ResetPassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
                         }
                     }
                 }
@@ -254,6 +444,21 @@ const docTemplate = `{
                 }
             }
         },
+        "Credentials": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "ErrorMessage": {
             "type": "object",
             "required": [
@@ -322,8 +527,75 @@ const docTemplate = `{
                 }
             }
         },
+        "ResetPassword": {
+            "type": "object",
+            "required": [
+                "password",
+                "passwordConfirmation"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "passwordConfirmation": {
+                    "type": "string"
+                }
+            }
+        },
+        "Token": {
+            "type": "object",
+            "required": [
+                "accessToken",
+                "expiresIn",
+                "issuedTokenType",
+                "refreshToken",
+                "refreshTokenExpiresIn",
+                "tokenType"
+            ],
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "expiresIn": {
+                    "type": "integer"
+                },
+                "issuedTokenType": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                },
+                "refreshTokenExpiresIn": {
+                    "type": "integer"
+                },
+                "tokenType": {
+                    "type": "string"
+                }
+            }
+        },
         "UpsertCamera": {
             "type": "object"
+        },
+        "User": {
+            "type": "object",
+            "required": [
+                "createdAt",
+                "updatedAt",
+                "username"
+            ],
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
         },
         "Version": {
             "type": "object",
@@ -348,9 +620,14 @@ const docTemplate = `{
             "name": "Authorization",
             "in": "header"
         },
-        "TenentId": {
+        "Locale": {
             "type": "apiKey",
-            "name": "Tenent-Id",
+            "name": "X-Locale",
+            "in": "header"
+        },
+        "Timezone": {
+            "type": "apiKey",
+            "name": "X-Timezone",
             "in": "header"
         }
     }

@@ -108,6 +108,10 @@ export class CameraApi extends runtime.BaseAPI implements CameraApiInterface {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Authorization authentication
+        }
+
         const response = await this.request({
             path: `/cameras/{hardwareId}`.replace(`{${"hardwareId"}}`, encodeURIComponent(String(requestParameters['hardwareId']))),
             method: 'GET',
@@ -133,6 +137,10 @@ export class CameraApi extends runtime.BaseAPI implements CameraApiInterface {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Authorization authentication
+        }
 
         const response = await this.request({
             path: `/cameras`,
@@ -175,6 +183,10 @@ export class CameraApi extends runtime.BaseAPI implements CameraApiInterface {
         const headerParameters: runtime.HTTPHeaders = {};
 
         headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Authorization authentication
+        }
 
         const response = await this.request({
             path: `/cameras/{hardwareId}`.replace(`{${"hardwareId"}}`, encodeURIComponent(String(requestParameters['hardwareId']))),

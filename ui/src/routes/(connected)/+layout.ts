@@ -11,6 +11,6 @@ export const load: LayoutLoad = async (event) => {
 	await event.parent();
 
 	if (!getP2PAccess() && !getHTTPAccess()) {
-		redirect(302, `${base}/signin`);
+		redirect(302, `${base}/connect`);
 	}
 };

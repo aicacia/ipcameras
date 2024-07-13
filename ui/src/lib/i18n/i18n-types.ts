@@ -65,6 +65,32 @@ type RootTranslation = {
 		 */
 		signIn: string
 		/**
+		 * S​i​g​n​ ​o​u​t
+		 */
+		signOut: string
+		/**
+		 * U​s​e​r​n​a​m​e
+		 */
+		usernameLabel: string
+		/**
+		 * E​n​t​e​r​ ​y​o​u​r​ ​U​s​e​r​n​a​m​e
+		 */
+		usernamePlaceholder: string
+		/**
+		 * P​a​s​s​w​o​r​d
+		 */
+		passwordLabel: string
+		/**
+		 * E​n​t​e​r​ ​y​o​u​r​ ​P​a​s​s​w​o​r​d
+		 */
+		passwordPlaceholder: string
+	}
+	connect: {
+		/**
+		 * C​o​n​n​e​c​t
+		 */
+		connect: string
+		/**
 		 * H​o​s​t
 		 */
 		hostLabel: string
@@ -138,12 +164,6 @@ type RootTranslation = {
 	header: {
 		/**
 		 * I​P​ ​C​a​m​e​r​a​s
-		 */
-		title: string
-	}
-	dashboard: {
-		/**
-		 * D​a​s​h​b​o​a​r​d
 		 */
 		title: string
 	}
@@ -222,6 +242,32 @@ export type TranslationFunctions = {
 		 */
 		signIn: () => LocalizedString
 		/**
+		 * Sign out
+		 */
+		signOut: () => LocalizedString
+		/**
+		 * Username
+		 */
+		usernameLabel: () => LocalizedString
+		/**
+		 * Enter your Username
+		 */
+		usernamePlaceholder: () => LocalizedString
+		/**
+		 * Password
+		 */
+		passwordLabel: () => LocalizedString
+		/**
+		 * Enter your Password
+		 */
+		passwordPlaceholder: () => LocalizedString
+	}
+	connect: {
+		/**
+		 * Connect
+		 */
+		connect: () => LocalizedString
+		/**
 		 * Host
 		 */
 		hostLabel: () => LocalizedString
@@ -295,12 +341,6 @@ export type TranslationFunctions = {
 	header: {
 		/**
 		 * IP Cameras
-		 */
-		title: () => LocalizedString
-	}
-	dashboard: {
-		/**
-		 * Dashboard
 		 */
 		title: () => LocalizedString
 	}

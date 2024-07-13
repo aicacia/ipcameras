@@ -3,6 +3,7 @@ package repo
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path"
 	"strings"
@@ -139,7 +140,7 @@ func readCameras() (map[string]*CameraST, error) {
 
 func readCamera(hardwareId string) (*CameraST, error) {
 	var camera CameraST
-	bytes, err := os.ReadFile(config.Get().Cameras.Path + "/" + hardwareId + ".json")
+	bytes, err := os.ReadFile(path.Join(config.Get().Cameras.Path, fmt.Sprintf("%s.json", hardwareId)))
 	if err != nil {
 		return nil, err
 	}
@@ -151,9 +152,13 @@ func readCamera(hardwareId string) (*CameraST, error) {
 }
 
 func writeCamera(camera *CameraST) error {
+	err := os.MkdirAll(config.Get().Cameras.Path, os.ModePerm)
+	if err != nil {
+		return err
+	}
 	cameraBytes, err := json.MarshalIndent(camera, "", "\t")
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(config.Get().Cameras.Path+"/"+camera.HardwareId+".json", cameraBytes, os.ModePerm)
+	return os.WriteFile(path.Join(config.Get().Cameras.Path, fmt.Sprintf("%s.json", camera.HardwareId)), cameraBytes, os.ModePerm)
 }

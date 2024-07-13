@@ -19,9 +19,9 @@ func GetOpenAPI(c *fiber.Ctx) error {
 
 // GetHealthCheck
 //
-//	@ID				healthCheck
+//	@ID		  		health-check
 //	@Summary		Get Health Check
-//	@Tags			app
+//	@Tags		  	app
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.HealthST
@@ -41,9 +41,9 @@ func GetHealthCheck(c *fiber.Ctx) error {
 
 // GetVersion
 //
-//	@ID				version
+//	@ID			  	version
 //	@Summary		Get Version
-//	@Tags			app
+//	@Tags			  app
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.VersionST
@@ -55,13 +55,15 @@ func GetVersion(c *fiber.Ctx) error {
 
 // GetP2P
 //
-//	@ID				p2pAccess
+//	@ID			  	p2p-access
 //	@Summary		Get p2p access info
 //	@Tags			  app
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.P2PAccessST
 //	@Router			/p2p-access [get]
+//
+//	@Security		Authorization
 func GetP2PAccess(c *fiber.Ctx) error {
 	c.Status(http.StatusOK)
 	return c.JSON(model.P2PAccessST{

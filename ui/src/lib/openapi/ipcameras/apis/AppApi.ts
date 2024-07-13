@@ -118,6 +118,10 @@ export class AppApi extends runtime.BaseAPI implements AppApiInterface {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Authorization authentication
+        }
+
         const response = await this.request({
             path: `/p2p-access`,
             method: 'GET',

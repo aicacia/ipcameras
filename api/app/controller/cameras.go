@@ -12,13 +12,15 @@ import (
 
 // GetCameras
 //
-//	@ID				cameras
+//	@ID			  	cameras
 //	@Summary		Get all cameras
-//	@Tags			camera
+//	@Tags		  	camera
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{array}	model.CameraST
 //	@Router			/cameras [get]
+//
+//	@Security		Authorization
 func GetCameras(c *fiber.Ctx) error {
 	cameras, err := repo.GetCameras()
 	if err != nil {
@@ -29,15 +31,17 @@ func GetCameras(c *fiber.Ctx) error {
 
 // GetCameraByHardwareId
 //
-//	@ID				cameraByHardwareId
+//	@ID			  	camera-by-hardware-id
 //	@Summary		Get camera by hardware id
-//	@Tags			camera
+//	@Tags		  	camera
 //	@Accept			json
 //	@Produce		json
 //	@Param			hardwareId	path		string	true	"Hardware Id"
 //	@Success		200	{object}	model.CameraST
 //	@Failure		404	{object}	model.ErrorST
 //	@Router			/cameras/{hardwareId} [get]
+//
+//	@Security		Authorization
 func GetCameraByHardwareId(c *fiber.Ctx) error {
 	camera, err := repo.GetCameraByHardwareId(c.Params("hardwareId"))
 	if err != nil {
@@ -51,7 +55,7 @@ func GetCameraByHardwareId(c *fiber.Ctx) error {
 
 // PatchCameraByHardwareId
 //
-//	@ID				  updateCameraByHardwareId
+//	@ID				  update-camera-by-hardware-id
 //	@Summary		update camera by hardware id
 //	@Tags			  camera
 //	@Accept			json
@@ -61,6 +65,8 @@ func GetCameraByHardwareId(c *fiber.Ctx) error {
 //	@Success		200	{object}	model.CameraST
 //	@Failure		404	{object}	model.ErrorST
 //	@Router			/cameras/{hardwareId} [patch]
+//
+//	@Security		Authorization
 func PatchCameraByHardwareId(c *fiber.Ctx) error {
 	var body model.UpsertCameraST
 	if err := c.BodyParser(&body); err != nil {

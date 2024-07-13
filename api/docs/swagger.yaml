@@ -33,6 +33,16 @@ definitions:
     - saved
     - updatedAt
     type: object
+  Credentials:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
   ErrorMessage:
     properties:
       error:
@@ -79,7 +89,54 @@ definitions:
     - password
     - ssl
     type: object
+  ResetPassword:
+    properties:
+      password:
+        type: string
+      passwordConfirmation:
+        type: string
+    required:
+    - password
+    - passwordConfirmation
+    type: object
+  Token:
+    properties:
+      accessToken:
+        type: string
+      expiresIn:
+        type: integer
+      issuedTokenType:
+        type: string
+      refreshToken:
+        type: string
+      refreshTokenExpiresIn:
+        type: integer
+      tokenType:
+        type: string
+    required:
+    - accessToken
+    - expiresIn
+    - issuedTokenType
+    - refreshToken
+    - refreshTokenExpiresIn
+    - tokenType
+    type: object
   UpsertCamera:
+    type: object
+  User:
+    properties:
+      createdAt:
+        format: date-time
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+      username:
+        type: string
+    required:
+    - createdAt
+    - updatedAt
+    - username
     type: object
   Version:
     properties:
@@ -115,6 +172,8 @@ paths:
             items:
               $ref: '#/definitions/Camera'
             type: array
+      security:
+      - Authorization: []
       summary: Get all cameras
       tags:
       - camera
@@ -122,7 +181,7 @@ paths:
     get:
       consumes:
       - application/json
-      operationId: cameraByHardwareId
+      operationId: camera-by-hardware-id
       parameters:
       - description: Hardware Id
         in: path
@@ -140,13 +199,15 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/Errors'
+      security:
+      - Authorization: []
       summary: Get camera by hardware id
       tags:
       - camera
     patch:
       consumes:
       - application/json
-      operationId: updateCameraByHardwareId
+      operationId: update-camera-by-hardware-id
       parameters:
       - description: Hardware Id
         in: path
@@ -170,6 +231,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/Errors'
+      security:
+      - Authorization: []
       summary: update camera by hardware id
       tags:
       - camera
@@ -177,7 +240,7 @@ paths:
     get:
       consumes:
       - application/json
-      operationId: healthCheck
+      operationId: health-check
       produces:
       - application/json
       responses:
@@ -196,7 +259,7 @@ paths:
     get:
       consumes:
       - application/json
-      operationId: p2pAccess
+      operationId: p2p-access
       produces:
       - application/json
       responses:
@@ -204,9 +267,120 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/P2PAccess'
+      security:
+      - Authorization: []
       summary: Get p2p access info
       tags:
       - app
+  /token:
+    post:
+      consumes:
+      - application/json
+      operationId: token
+      parameters:
+      - description: user credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/Credentials'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Token'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Errors'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errors'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Errors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errors'
+      summary: create a token by authenticating a user
+      tags:
+      - token
+  /user:
+    get:
+      consumes:
+      - application/json
+      operationId: current-user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Errors'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errors'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Errors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errors'
+      security:
+      - Authorization: []
+      summary: Get current user
+      tags:
+      - current-user
+  /user/reset-password:
+    patch:
+      consumes:
+      - application/json
+      operationId: reset-password
+      parameters:
+      - description: reset user's password
+        in: body
+        name: resetPassword
+        required: true
+        schema:
+          $ref: '#/definitions/ResetPassword'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Errors'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errors'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Errors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errors'
+      security:
+      - Authorization: []
+      summary: Resets a user's password
+      tags:
+      - current-user
   /version:
     get:
       consumes:
@@ -228,8 +402,12 @@ securityDefinitions:
     in: header
     name: Authorization
     type: apiKey
-  TenentId:
+  Locale:
     in: header
-    name: Tenent-Id
+    name: X-Locale
+    type: apiKey
+  Timezone:
+    in: header
+    name: X-Timezone
     type: apiKey
 swagger: "2.0"

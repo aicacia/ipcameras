@@ -19,6 +19,14 @@ const en = {
 	},
 	auth: {
 		signIn: 'Sign in',
+		signOut: 'Sign out',
+		usernameLabel: 'Username',
+		usernamePlaceholder: 'Enter your Username',
+		passwordLabel: 'Password',
+		passwordPlaceholder: 'Enter your Password'
+	},
+	connect: {
+		connect: 'Connect',
 		hostLabel: 'Host',
 		hostPlaceholder: 'Host and Port (localhost:8080)',
 		sslLabel: 'SSL',
@@ -41,9 +49,6 @@ const en = {
 	},
 	header: {
 		title: 'IP Cameras'
-	},
-	dashboard: {
-		title: 'Dashboard'
 	},
 	cameras: {
 		title: 'Cameras'

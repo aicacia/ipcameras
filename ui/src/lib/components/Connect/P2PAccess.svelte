@@ -3,13 +3,15 @@
 <script lang="ts" context="module">
 	import { create, test, enforce, only } from 'vest';
 
-	type SignInForm = {
+	type P2PAccessForm = {
 		host: string;
 		ssl: boolean;
+		id: string;
+		password: string;
 	};
 
 	const createSuite = (LL: TranslationFunctions) =>
-		create((data: Partial<SignInForm> = {}, fields: string[]) => {
+		create((data: Partial<P2PAccessForm> = {}, fields: string[]) => {
 			if (!fields.length) {
 				return;
 			}
@@ -20,6 +22,12 @@
 			});
 			test('ssl', LL.errors.message.required(), () => {
 				enforce(data.ssl).isNotBlank();
+			});
+			test('id', LL.errors.message.required(), () => {
+				enforce(data.id).isNotBlank();
+			});
+			test('password', LL.errors.message.required(), () => {
+				enforce(data.password).isNotBlank();
 			});
 		});
 </script>
@@ -32,17 +40,17 @@
 	import { debounce } from '@aicacia/debounce';
 	import InputResults from '$lib/components/InputResults.svelte';
 	import type { TranslationFunctions } from '$lib/i18n/i18n-types';
+	import type { P2PAccess } from '$lib/openapi/ipcameras';
 	import type { MaybePromise } from '@sveltejs/kit';
-	import { httpAccess, setHTTPAccess, type HTTPAccess } from '$lib/stores/httpAccess';
-	import { AppApi, Configuration } from '$lib/openapi/ipcameras';
-	import { defaultConfiguration } from '$lib/openapi';
-	import { getHttpOrigin } from '$lib/util';
-	import { setP2PAccess } from '$lib/stores/p2pAccess';
+	import { createAccessJWT } from '$lib/peer';
+	import { p2pAccess, setP2PAccess } from '$lib/stores/p2pAccess';
 
-	export let onSignin: (httpAccess: HTTPAccess) => MaybePromise<void>;
+	export let onConnect: (p2pAccess: P2PAccess) => MaybePromise<void>;
 
-	$: host = $httpAccess?.host || '127.0.0.1:3000';
-	$: ssl = $httpAccess?.ssl || false;
+	$: host = $p2pAccess?.host || 'p2p.aicacia.com';
+	$: ssl = $p2pAccess?.ssl === false ? false : true;
+	$: id = $p2pAccess?.id || '';
+	$: password = $p2pAccess?.password || '';
 
 	$: suite = createSuite($LL);
 	$: result = suite.get();
@@ -57,7 +65,7 @@
 
 	const fields = new Set<string>();
 	const validate = debounce(() => {
-		suite({ host, ssl }, Array.from(fields)).done((r) => {
+		suite({ host, ssl, id, password }, Array.from(fields)).done((r) => {
 			result = r;
 		});
 		fields.clear();
@@ -82,16 +90,10 @@
 			loading = true;
 			validateAll();
 			if (result.isValid()) {
-				const httpAccess = { host, ssl };
-				const ipcamerasConfiguration = new Configuration({
-					...defaultConfiguration,
-					basePath: getHttpOrigin(httpAccess.host, httpAccess.ssl)
-				});
-				const appApi = new AppApi(ipcamerasConfiguration);
-				const p2pAccess = await appApi.p2pAccess();
-				setHTTPAccess(httpAccess);
+				const p2pAccess = { host, ssl, id, password };
+				await createAccessJWT(p2pAccess);
 				setP2PAccess(p2pAccess);
-				await onSignin(httpAccess);
+				await onConnect(p2pAccess);
 			}
 		} catch (error) {
 			await handleError(error);
@@ -103,28 +105,54 @@
 
 <form on:submit|preventDefault={onSubmit}>
 	<div class="mb-2">
-		<label for="host">{$LL.auth.hostLabel()}</label>
+		<label for="host">{$LL.connect.hostLabel()}</label>
 		<input
 			class="w-full {cn('host')}"
 			type="text"
 			name="host"
-			placeholder={$LL.auth.hostPlaceholder()}
+			placeholder={$LL.connect.hostPlaceholder()}
 			bind:value={host}
 			on:input={onChange}
 		/>
 		<InputResults name="host" {result} />
 	</div>
 	<div class="mb-2">
-		<label for="ssl">{$LL.auth.sslLabel()}</label>
+		<label for="ssl">{$LL.connect.sslLabel()}</label>
 		<input class={cn('ssl')} type="checkbox" name="ssl" bind:checked={ssl} on:input={onChange} />
 		<InputResults name="ssl" {result} />
+	</div>
+	<div class="mb-2">
+		<label for="host">{$LL.connect.idLabel()}</label>
+		<input
+			class="w-full {cn('id')}"
+			type="text"
+			name="id"
+			autocomplete="username"
+			placeholder={$LL.connect.idPlaceholder()}
+			bind:value={id}
+			on:input={onChange}
+		/>
+		<InputResults name="id" {result} />
+	</div>
+	<div class="mb-2">
+		<label for="host">{$LL.connect.passwordLabel()}</label>
+		<input
+			class="w-full {cn('password')}"
+			type="password"
+			name="password"
+			autocomplete="current-password"
+			placeholder={$LL.connect.passwordPlaceholder()}
+			bind:value={password}
+			on:input={onChange}
+		/>
+		<InputResults name="password" {result} />
 	</div>
 	<div class="flex flex-row justify-end">
 		<button type="submit" class="btn primary flex flex-shrink" {disabled}>
 			{#if loading}<div class="mr-2 flex flex-row justify-center">
 					<div class="inline-block h-6 w-6"><Spinner /></div>
 				</div>{/if}
-			{$LL.auth.signIn()}
+			{$LL.connect.connect()}
 		</button>
 	</div>
 </form>

@@ -4,7 +4,7 @@
 /.vscode/
 /log/
 /html
-/cameras/
+/data/
 /ipcameras-api
 /ipcameras-api.tar
 /.task
