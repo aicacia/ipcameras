@@ -77,7 +77,7 @@ func InitApp(appConfig AppConfigST) *fiber.App {
 		StrictRouting: true,
 		ServerHeader:  "",
 		AppName:       "",
-		ErrorHandler:  ErrorHandler,
+		ErrorHandler:  errorHandler,
 	})
 	fiberApp.Use(fiberRecover.New())
 	fiberApp.Use(fiberLogger.New(fiberLogger.Config{
@@ -99,7 +99,7 @@ func InitApp(appConfig AppConfigST) *fiber.App {
 	return fiberApp
 }
 
-func ErrorHandler(c *fiber.Ctx, err error) error {
+func errorHandler(c *fiber.Ctx, err error) error {
 	if e, ok := err.(*model.ErrorST); ok {
 		return e.Send(c)
 	}
@@ -108,5 +108,6 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 	if errors.As(err, &e) {
 		code = e.Code
 	}
+	slog.Debug("error", "code", code, "err", err)
 	return model.NewError(code).AddError("internal", err.Error()).Send(c)
 }

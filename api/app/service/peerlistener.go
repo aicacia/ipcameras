@@ -95,8 +95,12 @@ func peerListener(ctx context.Context) {
 						continue
 					}
 					var p *peer.Peer
+					ordered := true
 					p = peer.NewPeer(peer.PeerOptions{
 						Id: peerId,
+						ChannelConfig: &webrtc.DataChannelInit{
+							Ordered: &ordered,
+						},
 						Config: &webrtc.Configuration{
 							ICEServers: []webrtc.ICEServer{
 								{

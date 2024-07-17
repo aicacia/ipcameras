@@ -13,7 +13,6 @@
 
 	async function init(peer: Peer) {
 		peer.ready().then(() => {
-			console.debug(`${peer.getId()}: ready`);
 			peer.send(
 				JSON.stringify({
 					type: 'rtsp',

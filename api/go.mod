@@ -10,7 +10,7 @@ require (
 	github.com/aicacia/go-cslice v0.0.0-20240630135950-7315620337dd
 	github.com/aicacia/go-peer v0.0.0-20240711092824-bddfc144837a
 	github.com/aicacia/go-pubsub v0.0.0-20231003004227-7c3cbaa3ceab
-	github.com/aicacia/go-webrtchttp v0.0.0-20240706110519-ad49ef71204e
+	github.com/aicacia/go-webrtchttp v0.0.0-20240716220704-91af7751e522
 	github.com/alexedwards/argon2id v1.0.0
 	github.com/alexflint/go-arg v1.5.0
 	github.com/deepch/vdk v0.0.27

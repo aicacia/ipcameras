@@ -30,7 +30,6 @@ export function getWebRTCFetch() {
 			if (!webrtcFetchPromise) {
 				const peer = createPeer('webrtchttp');
 				webrtcFetchPromise = peer.ready().then(() => {
-					console.debug(`${peer.getId()}: ready`);
 					return createWebRTCFetch(peer.getChannel()!);
 				});
 				peer.on('close', () => {
