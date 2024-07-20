@@ -87,7 +87,7 @@ func streamRTSPURL(peer *peer.Peer, rtspUrl string) {
 			if codec.Type() == av.H264 {
 				track, err = webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{
 					MimeType: webrtc.MimeTypeH264,
-				}, "pion-rtsp-video", "pion-video")
+				}, "rtsp-video", "video")
 				if err != nil {
 					slog.Error("error creating webrtc track: %v", "error", err)
 					break
@@ -127,7 +127,7 @@ func streamRTSPURL(peer *peer.Peer, rtspUrl string) {
 				MimeType:  AudioCodecString,
 				Channels:  uint16(codec.(av.AudioCodecData).ChannelLayout().Count()),
 				ClockRate: uint32(codec.(av.AudioCodecData).SampleRate()),
-			}, "pion-rtsp-audio", "pion-rtsp-audio")
+			}, "rtsp-audio", "rtsp-audio")
 			if err != nil {
 				slog.Error("error creating webrtc track: %v", "error", err)
 				break

@@ -50,11 +50,11 @@ func webrtcHandler(fiberApp *fiber.App, responseWriter http.ResponseWriter, webr
 			header.Add(name, value)
 		}
 	}
+	responseWriter.WriteHeader(res.StatusCode)
 	_, err = io.Copy(responseWriter, res.Body)
 	if err != nil {
 		responseWriter.WriteHeader(http.StatusInternalServerError)
 		responseWriter.Write([]byte("{\"errors\":{\"internal\":[{\"error\":\"application\",\"parameters\":[]}]}}"))
 		return
 	}
-	responseWriter.WriteHeader(res.StatusCode)
 }

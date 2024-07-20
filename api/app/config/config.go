@@ -73,6 +73,10 @@ type RTSPST struct {
 	Debug                 bool `json:"debug"`
 }
 
+type RecodingST struct {
+	Folder string `json:"folder"`
+}
+
 type JWTST struct {
 	Secret                  string `json:"secret"`
 	ExpiresInSeconds        int64  `json:"expiresInSeconds"`
@@ -91,6 +95,7 @@ type ConfigST struct {
 	P2P       P2PST       `json:"p2p"`
 	Ice       []IceST     `json:"ice"`
 	RTSP      RTSPST      `json:"rtsp"`
+	Recording RecodingST  `json:"recording"`
 	JWT       JWTST       `json:"jwt"`
 }
 
@@ -154,6 +159,9 @@ func InitConfig(path string) error {
 			ConnectTimeoutSeconds: 10,
 			IOTimeoutSeconds:      10,
 			Debug:                 true,
+		},
+		Recording: RecodingST{
+			Folder: "./data/recording",
 		},
 		JWT: JWTST{
 			ExpiresInSeconds:        86400,

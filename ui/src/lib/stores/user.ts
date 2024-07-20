@@ -103,8 +103,15 @@ export async function tryGetCurrentUser() {
 ipcamerasConfiguration.middleware?.push({
 	async post(context) {
 		switch (context.response.status) {
-			case 503:
+			case 401: {
+				signOut();
+				await goto(`${base}/signin`);
+				break;
+			}
+			case 503: {
 				await goto(`${base}/maintenance`);
+				break;
+			}
 		}
 	}
 });
