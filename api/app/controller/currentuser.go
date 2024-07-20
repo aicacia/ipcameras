@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -50,7 +50,7 @@ func GetCurrentUser(c *fiber.Ctx) error {
 func PatchResetPassword(c *fiber.Ctx) error {
 	var resetPassword model.ResetPasswordST
 	if err := c.BodyParser(&resetPassword); err != nil {
-		log.Printf("failed to parse reset password: %v\n", err)
+		slog.Error("failed to parse reset password", "error", err)
 		return model.NewError(http.StatusBadRequest).AddError("request", "invalid")
 	}
 	password := strings.TrimSpace(resetPassword.Password)
@@ -65,7 +65,7 @@ func PatchResetPassword(c *fiber.Ctx) error {
 	user := middleware.GetUser(c)
 	_, err := repo.UpdateUserPassword(user.Username, password)
 	if err != nil {
-		log.Printf("failed to update user password: %v\n", err)
+		slog.Error("failed to update user password", "error", err)
 		return model.NewError(http.StatusInternalServerError).AddError("internal", "application")
 	}
 	c.Status(http.StatusNoContent)

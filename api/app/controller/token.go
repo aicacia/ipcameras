@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -66,12 +65,12 @@ func sendToken(
 	}
 	accessToken, err := jwt.CreateToken(&claims, config.Get().JWT.Secret)
 	if err != nil {
-		log.Printf("failed to create access token: %v\n", err)
+		slog.Error("failed to create access token", "error", err)
 		return model.NewError(http.StatusInternalServerError).AddError("internal", "application")
 	}
 	refreshToken, err := jwt.CreateToken(claims.ToRefreshClaims(now.Unix()+int64(config.Get().JWT.RefreshExpiresInSeconds)), config.Get().JWT.Secret)
 	if err != nil {
-		log.Printf("failed to create refresh token: %v\n", err)
+		slog.Error("failed to create refresh token", "error", err)
 		return model.NewError(http.StatusInternalServerError).AddError("internal", "application")
 	}
 	return c.JSON(model.TokenST{

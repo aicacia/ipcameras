@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -20,7 +20,7 @@ func AuthorizedMiddleware() fiber.Handler {
 		_, tokenString := GetAuthorizationFromContext(c)
 		claims, err := jwt.ParseClaimsFromToken(tokenString, config.Get().JWT.Secret)
 		if err != nil {
-			log.Printf("failed to parse claims from token: %v", err)
+			slog.Error("failed to parse claims from token", "error", err)
 			return model.NewError(http.StatusUnauthorized).AddError("authorization", "invalid")
 		}
 		if claims.Type != jwt.BearerTokenType {
@@ -28,7 +28,7 @@ func AuthorizedMiddleware() fiber.Handler {
 		}
 		user, err := repo.GetUserByUsername(claims.Subject)
 		if err != nil {
-			log.Printf("failed to fetch user: %v", err)
+			slog.Error("failed to fetch user", "error", err)
 			return model.NewError(http.StatusUnauthorized).AddError("authorization", "invalid")
 		}
 		c.Locals(userLocalKey, user)

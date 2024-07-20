@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"log"
 	"log/slog"
 
 	"github.com/aicacia/go-peer"
@@ -26,7 +25,7 @@ func CodecsToStrings(codecs []av.CodecData) []string {
 	var out []string
 	for _, codec := range codecs {
 		if codec.Type() != av.H264 && codec.Type() != av.PCM_ALAW && codec.Type() != av.PCM_MULAW && codec.Type() != av.OPUS {
-			log.Println("Codec Not Supported WebRTC ignore this track", codec.Type())
+			slog.Error("Codec Not Supported WebRTC ignore this track", "type", codec.Type())
 			continue
 		}
 		if codec.Type().IsVideo() {

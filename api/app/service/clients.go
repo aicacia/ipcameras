@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/url"
 	"sync/atomic"
 	"time"
@@ -19,8 +19,9 @@ import (
 )
 
 var (
-	ErrorClientExitDisconnect = errors.New("client exit disconnect")
-	ErrorClientNoClient       = errors.New("no client exists")
+	ErrClientExitDisconnect = errors.New("client exit disconnect")
+	ErrClientNoClient       = errors.New("no client exists")
+	ErrUnsupportedScheme    = errors.New("unsupported scheme")
 )
 
 var clients = cmap.New[string, *clientST]()
@@ -74,6 +75,8 @@ func RunIfNotRunning(clientUrlString string) error {
 	if client != nil {
 		if client.url.Scheme == "rtsp" {
 			go rtspWorkerLoop(clientUrlString)
+		} else {
+			return ErrUnsupportedScheme
 		}
 	}
 	return nil
@@ -81,7 +84,7 @@ func RunIfNotRunning(clientUrlString string) error {
 
 func clientSendClose(url string) {
 	if client, ok := clients.Get(url); ok && client != nil && !client.closed.Load() {
-		log.Printf("%s: Sending close signal", url)
+		slog.Debug("Sending close signal", "url", url)
 		var event clientEvent = &clientEventCloseST{}
 		client.pubsub.Publish(event)
 	}
@@ -97,7 +100,7 @@ func clientClose(url string) {
 func clientDelete(url string) {
 	clientSendClose(url)
 	clients.Remove(url)
-	log.Printf("%s: Deleted RTSP", url)
+	slog.Debug("Deleted RTSP", "url", url)
 }
 
 func clientSetReady(url string) {
@@ -127,16 +130,16 @@ func waitForClientReady(url string) bool {
 		if client.ready.Load() {
 			return true
 		} else {
-			log.Printf("%s: Waiting for client to be ready\n", url)
+			slog.Debug("Waiting for client to be ready", "url", url)
 			s := client.pubsub.Subscribe()
 			defer s.Close()
 			for e := range s.C {
 				switch e.Kind() {
 				case clientCloseEvent:
-					log.Printf("%s: Client closed\n", url)
+					slog.Debug("Client closed", "url", url)
 					return false
 				case clientReadyEvent:
-					log.Printf("%s: Client ready\n", url)
+					slog.Debug("Client ready", "url", url)
 					return true
 				}
 			}
@@ -153,7 +156,7 @@ func GetClientCodecs(url string) []av.CodecData {
 				if codec.Type() == av.H264 {
 					codecVideo, ok := codec.(h264parser.CodecData)
 					if !ok || codecVideo.SPS() == nil || codecVideo.PPS() == nil || len(codecVideo.SPS()) <= 0 || len(codecVideo.PPS()) <= 0 {
-						log.Printf("%s: Bad Video Codec SPS or PPS Wait\n", url)
+						slog.Debug("Bad Video Codec SPS or PPS Wait", "url", url)
 						validCodecs = false
 						break
 					}
@@ -164,7 +167,7 @@ func GetClientCodecs(url string) []av.CodecData {
 			}
 		}
 	}
-	log.Printf("%s: No client to get Codecs\n", url)
+	slog.Debug("No client to get Codecs", "url", url)
 	return nil
 }
 
@@ -198,10 +201,10 @@ func DeleteViewer(url, id string) {
 	if client, ok := clients.Get(url); ok && client != nil {
 		client.viewers.Remove(id)
 		if client.viewers.Count() == 0 {
-			log.Printf("%s: No more viewers closing", url)
+			slog.Debug("No more viewers closing", "url", url)
 			clientSendClose(url)
 		}
-		log.Printf("%s: Closed RTSP viewer %s", url, id)
+		slog.Debug("Closed RTSP viewer", "url", url, "id", id)
 	}
 }
 
@@ -222,21 +225,21 @@ func cast(url string, packet *av.Packet) {
 func rtspWorkerLoop(url string) {
 	if client, ok := clients.Get(url); ok && client != nil {
 		if !client.running.CompareAndSwap(false, true) {
-			log.Printf("%s: Already running RTSP worker loop\n", url)
+			slog.Debug("Already running RTSP worker loop", "url", url)
 			return
 		}
 	} else {
-		log.Printf("%s: No client to create RTSP worker loop\n", url)
+		slog.Debug("No client to create RTSP worker loop", "url", url)
 		return
 	}
 	defer clientDelete(url)
 	for {
 		closed, err := rtspWorker(url)
 		if err != nil {
-			log.Printf("%s: RTSP worker loop Error %s\n", url, err)
+			slog.Error("RTSP worker loop Error", "url", url, "error", err)
 		}
 		if closed || clientIsClosed(url) {
-			log.Printf("%s: RTSP worker loop closed\n", url)
+			slog.Debug("RTSP worker loop closed", "url", url)
 			break
 		}
 	}
@@ -256,12 +259,12 @@ func rtspWorker(url string) (bool, error) {
 	defer rtsp_client.Close()
 
 	if rtsp_client.CodecData != nil {
-		log.Printf("%s: RTSP worker Codecs: %d\n", url, len(rtsp_client.CodecData))
+		slog.Debug("RTSP worker Codecs", "url", url, "codecs", len(rtsp_client.CodecData))
 		clientCodecsSet(url, rtsp_client.CodecData)
 	}
 	client, ok := clients.Get(url)
 	if !ok || client == nil || client.closed.Load() {
-		return true, ErrorClientNoClient
+		return true, ErrClientNoClient
 	}
 	s := client.pubsub.Subscribe()
 	defer s.Close()
@@ -270,18 +273,18 @@ func rtspWorker(url string) (bool, error) {
 		case e := <-s.C:
 			switch e.Kind() {
 			case clientCloseEvent:
-				log.Printf("%s: RTSP worker Camera close signal\n", url)
+				slog.Debug("RTSP worker Camera close signal", "url", url)
 				clientClose(url)
 				return true, nil
 			}
 		case signals := <-rtsp_client.Signals:
 			switch signals {
 			case rtspv2.SignalCodecUpdate:
-				log.Printf("%s: RTSP worker rtspv2.SignalCodecUpdate Codecs: %d\n", url, len(rtsp_client.CodecData))
+				slog.Debug("RTSP worker rtspv2.SignalCodecUpdate Codecs", "url", url, "codecs", len(rtsp_client.CodecData))
 				clientCodecsSet(url, rtsp_client.CodecData)
 			case rtspv2.SignalStreamRTPStop:
-				log.Printf("%s: RTSP worker rtspv2.SignalClientRTPStop\n", url)
-				return false, ErrorClientExitDisconnect
+				slog.Debug("RTSP worker rtspv2.SignalClientRTPStop", "url", url)
+				return false, ErrClientExitDisconnect
 			}
 		case packetAV := <-rtsp_client.OutgoingPacketQueue:
 			packetAV.Time = time.Duration(time.Now().UTC().UnixNano())

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -16,7 +16,7 @@ func TimezoneMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		timezone, err := GetTimezoneFromContext(c)
 		if err != nil {
-			log.Printf("failed to get timezone: %v", err)
+			slog.Error("failed to get timezone", "error", err)
 			return model.NewError(http.StatusBadRequest).AddError("x-timezone", "invalid")
 		}
 		c.Locals(timezoneKey, timezone)
