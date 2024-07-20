@@ -1,8 +1,8 @@
 [package]
+authors = ["nathanfaucett@gmail.com"]
 default-run = "ipcameras-ui"
 description = "aicacia ipcameras ui"
 edition = "2021"
-ipcamerasors = ["nathanfaucett@gmail.com"]
 license = ""
 name = "ipcameras-ui"
 repository = ""
@@ -14,16 +14,13 @@ crate-type = ["lib", "cdylib", "staticlib"]
 name = "ipcameras_ui"
 
 [build-dependencies]
-tauri-build = {version = "2.0.0-beta.17", features = []}
+tauri-build = {version = "2.0.0-beta.19", features = [] }
 
 [dependencies]
-serde = {version = "1", features = ["derive"]}
+hyper-rustls = "0.26"
+serde = {version = "1", features = ["derive"] }
 serde_json = "1"
-tauri = {version = "2.0.0-beta.22", features = []}
-tauri-plugin-log = "2.0.0-beta.6"
-
-[features]
-custom-protocol = ["tauri/custom-protocol"]
+tauri = {version = "2.0.0-beta.24", features = [] }
 
 [profile.release]
 codegen-units = 1
