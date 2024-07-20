@@ -24,8 +24,8 @@ importers:
         specifier: '0'
         version: 0.1.4(tslib@2.6.3)
       '@aicacia/webrtchttp':
-        specifier: git://github.com/aicacia/ts-webrtchttp.git#c4569c6
-        version: https://codeload.github.com/aicacia/ts-webrtchttp/tar.gz/c4569c6(tslib@2.6.3)
+        specifier: git://github.com/aicacia/ts-webrtchttp.git#4dfa290
+        version: https://codeload.github.com/aicacia/ts-webrtchttp/tar.gz/4dfa290(tslib@2.6.3)
       '@svelte-put/clickoutside':
         specifier: '3'
         version: 3.0.2(svelte@4.2.18)
@@ -160,6 +160,12 @@ packages:
     peerDependencies:
       tslib: '2'
 
+  '@aicacia/http@https://codeload.github.com/aicacia/ts-http/tar.gz/84fd36a':
+    resolution: {tarball: https://codeload.github.com/aicacia/ts-http/tar.gz/84fd36a}
+    version: 0.1.0
+    peerDependencies:
+      tslib: '2'
+
   '@aicacia/iter@0.1.7':
     resolution: {integrity: sha512-G77ZVDV9B2/gsaPCBxWqiyUZIBcJm29kXy0uxxPdw22/+iB9fG22vnuAALjvfFesV6zoOeBthD4faW/GLxVOQQ==}
     peerDependencies:
@@ -192,8 +198,8 @@ packages:
     peerDependencies:
       tslib: '2'
 
-  '@aicacia/webrtchttp@https://codeload.github.com/aicacia/ts-webrtchttp/tar.gz/c4569c6':
-    resolution: {tarball: https://codeload.github.com/aicacia/ts-webrtchttp/tar.gz/c4569c6}
+  '@aicacia/webrtchttp@https://codeload.github.com/aicacia/ts-webrtchttp/tar.gz/4dfa290':
+    resolution: {tarball: https://codeload.github.com/aicacia/ts-webrtchttp/tar.gz/4dfa290}
     version: 0.1.0
     peerDependencies:
       tslib: '2'
@@ -2732,6 +2738,10 @@ snapshots:
     dependencies:
       tslib: 2.6.3
 
+  '@aicacia/http@https://codeload.github.com/aicacia/ts-http/tar.gz/84fd36a(tslib@2.6.3)':
+    dependencies:
+      tslib: 2.6.3
+
   '@aicacia/iter@0.1.7(tslib@2.6.3)':
     dependencies:
       '@aicacia/option': 0.1.2(tslib@2.6.3)
@@ -2763,9 +2773,10 @@ snapshots:
     dependencies:
       tslib: 2.6.3
 
-  '@aicacia/webrtchttp@https://codeload.github.com/aicacia/ts-webrtchttp/tar.gz/c4569c6(tslib@2.6.3)':
+  '@aicacia/webrtchttp@https://codeload.github.com/aicacia/ts-webrtchttp/tar.gz/4dfa290(tslib@2.6.3)':
     dependencies:
       '@aicacia/hash': 0.2.3(tslib@2.6.3)
+      '@aicacia/http': https://codeload.github.com/aicacia/ts-http/tar.gz/84fd36a(tslib@2.6.3)
       '@aicacia/rand': 0.2.14(tslib@2.6.3)
       tslib: 2.6.3
 

@@ -64,7 +64,7 @@
 		"@aicacia/peer": "git://github.com/aicacia/ts-peer.git#93ad77d",
 		"@aicacia/rand": "0",
 		"@aicacia/string-fuzzy_equals": "0",
-		"@aicacia/webrtchttp": "git://github.com/aicacia/ts-webrtchttp.git#c4569c6",
+		"@aicacia/webrtchttp": "git://github.com/aicacia/ts-webrtchttp.git#4dfa290",
 		"@svelte-put/clickoutside": "3",
 		"deep-equal": "2",
 		"eventemitter3": "5",
