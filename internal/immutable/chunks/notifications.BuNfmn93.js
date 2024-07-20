@@ -1,0 +1,1 @@
+import{c as t}from"./index.C1jzUpoF.js";import{w as s}from"./index.Dmtj9H_x.js";const c=s([]),d=c;function m(r,i="error",o=5e3){const n=t();return c.update(e=>[...e,{id:n,message:r,type:i}]),o>0&&setTimeout(()=>a(n),o),n}function a(r){c.update(i=>{const o=i.findIndex(n=>n.id===r);return o===-1||(i=i.slice(),i.splice(o,1)),i})}export{m as c,d as n,a as r};
