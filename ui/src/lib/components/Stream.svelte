@@ -8,6 +8,7 @@
 	export let rtspUrl: string;
 	export let peer: Peer | undefined = undefined;
 	export let video: HTMLVideoElement = undefined as never as HTMLVideoElement;
+  export let controls = true;
 
 	let mounted = false;
 
@@ -45,6 +46,6 @@
 	});
 </script>
 
-<video class="w-full" bind:this={video} controls autoplay>
+<video class="w-full" bind:this={video} {controls} autoplay>
 	<track kind="captions" />
 </video>

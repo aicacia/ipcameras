@@ -1,4 +1,4 @@
-import type { P2PAccess } from '$lib/openapi/ipcameras/models/P2PAccess';
+import type { P2PAccess } from '$lib/openapi/ipcameras';
 import { localstorageWritable } from 'svelte-localstorage-writable';
 import { derived, get } from 'svelte/store';
 

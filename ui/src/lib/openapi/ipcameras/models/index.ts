@@ -5,6 +5,7 @@ export * from './Credentials';
 export * from './ErrorMessage';
 export * from './Errors';
 export * from './Health';
+export * from './ICEServer';
 export * from './P2PAccess';
 export * from './ResetPassword';
 export * from './Token';

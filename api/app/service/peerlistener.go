@@ -102,11 +102,7 @@ func peerListener(ctx context.Context) {
 							Ordered: &ordered,
 						},
 						Config: &webrtc.Configuration{
-							ICEServers: []webrtc.ICEServer{
-								{
-									URLs: []string{"stun:stun.l.google.com:19302"},
-								},
-							},
+							ICEServers: config.Get().GetWebRTCServers(),
 						},
 						OnSignal: func(message map[string]interface{}) error {
 							return websocket.JSON.Send(conn, map[string]interface{}{

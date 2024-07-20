@@ -1,5 +1,3 @@
-github.com/aicacia/go-atomic-value v0.0.0-20240711090356-37ccff13e4eb h1:HxopNH79NslgrmaQ7l+1O8VjXK87peVJWXemWBiBdSc=
-github.com/aicacia/go-atomic-value v0.0.0-20240711090356-37ccff13e4eb/go.mod h1:d29Khs3KPw2R3CBaEsTUz4e4USWHjJNyX7OknMgNgUU=
 github.com/aicacia/go-peer v0.0.0-20240626213345-917422c0b832 h1:OMBFJe9FCB66E/tQUVBPUoy5p77hE0P49rfKGsn84tk=
 github.com/aicacia/go-peer v0.0.0-20240626213345-917422c0b832/go.mod h1:D8yhkNWPBygpvAuvcfgnwYY/CqXgok6/S/fdJ7bRjRI=
 github.com/aicacia/go-peer v0.0.0-20240630145704-d2c6b517f509 h1:qndSSO/szGeIeAvSAtlbWOIoXvT7FDGtBT2Am3v+ruU=
@@ -13,13 +11,11 @@ github.com/aicacia/go-peer v0.0.0-20240710213018-129601b03e75 h1:4hy6DC84wIZ7ARy
 github.com/aicacia/go-peer v0.0.0-20240710213018-129601b03e75/go.mod h1:NFmtB4+2ZcjNG4yA0TXSKulKaGPAge69mCqjMU1PJ+g=
 github.com/aicacia/go-peer v0.0.0-20240710224522-2367cab7be8b h1:b9AqYNxv4/sAR2j9xcvRgKs/yr5EUXP6lA9HoFbg0yk=
 github.com/aicacia/go-peer v0.0.0-20240710224522-2367cab7be8b/go.mod h1:NFmtB4+2ZcjNG4yA0TXSKulKaGPAge69mCqjMU1PJ+g=
-github.com/aicacia/go-peer v0.0.0-20240711092824-bddfc144837a h1:sBAwJ7G/Frt6qdDY8Q7EbvPmVGuDqBxXEPz3anlegIs=
-github.com/aicacia/go-peer v0.0.0-20240711092824-bddfc144837a/go.mod h1:9jOHnAvmltPSIT9CiAAfCiWndhmNOiVIiiotGSGJaAI=
+github.com/aicacia/go-result-and-option v0.0.0-20240604115249-1370553e9301 h1:5t+/9FiPiFb2/UlEIHgof8SIvUDbGLCx8Xckw5Vpw1s=
+github.com/aicacia/go-result-and-option v0.0.0-20240604115249-1370553e9301/go.mod h1:YdQYcAxqFZ4fRnYWqGEvG5J+AT0Cba1oPDtunZOSazs=
 github.com/aicacia/go-webrtchttp v0.0.0-20240703215242-ca8a556bd5fd/go.mod h1:hOXfQlEa2qb7z54W5kcyEcpih1HKLizxnDc7efEUACo=
 github.com/aicacia/go-webrtchttp v0.0.0-20240706200016-28ea6406c988 h1:eku5sRSwO82Dvu8LQ9SRAd0sJuk1UxhybJZeRsmtyNs=
 github.com/aicacia/go-webrtchttp v0.0.0-20240706200016-28ea6406c988/go.mod h1:0K3tLeswAOQyf/mpp6mf+DXhM7B9hYm15s9teOrumDQ=
-github.com/aicacia/go-webrtchttp v0.0.0-20240716220704-91af7751e522 h1:0UwZoGfNniB4lHQm3KEn9C04qwbWDCkeKchjn0fl1V0=
-github.com/aicacia/go-webrtchttp v0.0.0-20240716220704-91af7751e522/go.mod h1:0K3tLeswAOQyf/mpp6mf+DXhM7B9hYm15s9teOrumDQ=
 github.com/cheekybits/genny v1.0.0 h1:uGGa4nei+j20rOSeDeP5Of12XVm7TGUd4dJA9RDitfE=
 github.com/cheekybits/genny v1.0.0/go.mod h1:+tQajlRqAUrPI7DOSpB0XAqZYtQakVtB7wXkRAgjxjQ=
 github.com/coreos/go-systemd/v22 v22.3.2 h1:D9/bQk5vlXQFZ6Kwuu6zaiXJ9oTPe68++AzAJc1DzSI=

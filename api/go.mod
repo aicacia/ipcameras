@@ -5,7 +5,7 @@ go 1.22
 toolchain go1.22.0
 
 require (
-	github.com/aicacia/go-atomic-value v0.0.0-20240622130239-0836551b1902
+	github.com/aicacia/go-atomic-value v0.0.0-20240711090356-37ccff13e4eb
 	github.com/aicacia/go-cmap v0.0.0-20240420172349-4aaf998b89ef
 	github.com/aicacia/go-cslice v0.0.0-20240630135950-7315620337dd
 	github.com/aicacia/go-peer v0.0.0-20240711092824-bddfc144837a
@@ -28,7 +28,6 @@ require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
-	github.com/aicacia/go-result-and-option v0.0.0-20240604115249-1370553e9301 // indirect
 	github.com/alexflint/go-scalar v1.2.0 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/beevik/etree v1.1.0 // indirect

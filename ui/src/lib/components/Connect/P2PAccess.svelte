@@ -44,6 +44,8 @@
 	import type { MaybePromise } from '@sveltejs/kit';
 	import { createAccessJWT } from '$lib/peer';
 	import { p2pAccess, setP2PAccess } from '$lib/stores/p2pAccess';
+	import { setICEServers } from '$lib/stores/iceServers';
+	import { appApi } from '$lib/openapi';
 
 	export let onConnect: (p2pAccess: P2PAccess) => MaybePromise<void>;
 
@@ -93,6 +95,7 @@
 				const p2pAccess = { host, ssl, id, password };
 				await createAccessJWT(p2pAccess);
 				setP2PAccess(p2pAccess);
+				setICEServers(await appApi.iceServers());
 				await onConnect(p2pAccess);
 			}
 		} catch (error) {

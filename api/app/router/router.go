@@ -26,6 +26,7 @@ func InstallRouter(fiberApp *fiber.App) {
 
 	root.Get("/health", controller.GetHealthCheck)
 	root.Get("/version", controller.GetVersion)
+	root.Get("/ice-servers", controller.GetICEServers)
 
 	root.Post("/token", controller.PostToken)
 

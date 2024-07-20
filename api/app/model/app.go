@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type HealthST struct {
 	Date time.Time `json:"date" validate:"required" format:"date-time"`

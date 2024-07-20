@@ -16,12 +16,15 @@
 import * as runtime from '../runtime';
 import type {
   Health,
+  ICEServer,
   P2PAccess,
   Version,
 } from '../models/index';
 import {
     HealthFromJSON,
     HealthToJSON,
+    ICEServerFromJSON,
+    ICEServerToJSON,
     P2PAccessFromJSON,
     P2PAccessToJSON,
     VersionFromJSON,
@@ -48,6 +51,20 @@ export interface AppApiInterface {
      * Get Health Check
      */
     healthCheck(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Health>;
+
+    /**
+     * 
+     * @summary Get ICE servers
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AppApiInterface
+     */
+    iceServersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ICEServer>>>;
+
+    /**
+     * Get ICE servers
+     */
+    iceServers(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ICEServer>>;
 
     /**
      * 
@@ -107,6 +124,32 @@ export class AppApi extends runtime.BaseAPI implements AppApiInterface {
      */
     async healthCheck(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Health> {
         const response = await this.healthCheckRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get ICE servers
+     */
+    async iceServersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ICEServer>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/ice-servers`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ICEServerFromJSON));
+    }
+
+    /**
+     * Get ICE servers
+     */
+    async iceServers(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ICEServer>> {
+        const response = await this.iceServersRaw(initOverrides);
         return await response.value();
     }
 

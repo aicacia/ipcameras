@@ -38,6 +38,7 @@
 	import { defaultConfiguration } from '$lib/openapi';
 	import { getHttpOrigin } from '$lib/util';
 	import { setP2PAccess } from '$lib/stores/p2pAccess';
+	import { setICEServers } from '$lib/stores/iceServers';
 
 	export let onConnect: (httpAccess: HTTPAccess) => MaybePromise<void>;
 
@@ -86,7 +87,7 @@
 					basePath: getHttpOrigin(httpAccess.host, httpAccess.ssl)
 				});
 				const appApi = new AppApi(ipcamerasConfiguration);
-				await appApi.version();
+				setICEServers(await appApi.iceServers());
 				setHTTPAccess(httpAccess);
 				await onConnect(httpAccess);
 			}

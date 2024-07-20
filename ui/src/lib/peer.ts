@@ -4,6 +4,7 @@ import { type WebRTCFetch, createWebRTCFetch } from '@aicacia/webrtchttp';
 import { Peer } from '@aicacia/peer';
 import { KeepAliveWebSocket } from '@aicacia/keepalivewebsocket';
 import type { P2PAccess } from './openapi/ipcameras';
+import { getICEServers } from './stores/iceServers';
 
 const peers = new Map<string, Peer>();
 const websocket = new KeepAliveWebSocket({
@@ -46,11 +47,7 @@ export function createPeer(type: string) {
 	websocket.connect();
 	const peer = new Peer({
 		config: {
-			iceServers: [
-				{
-					urls: ['stun:stun.l.google.com:19302']
-				}
-			]
+			iceServers: getICEServers()
 		},
 		channelConfig: {
 			ordered: true

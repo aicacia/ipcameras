@@ -73,6 +73,18 @@ definitions:
     required:
     - date
     type: object
+  ICEServer:
+    properties:
+      credential: {}
+      credentialType:
+        type: string
+      urls:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
   P2PAccess:
     properties:
       host:
@@ -253,6 +265,23 @@ paths:
           schema:
             $ref: '#/definitions/Health'
       summary: Get Health Check
+      tags:
+      - app
+  /ice-servers:
+    get:
+      consumes:
+      - application/json
+      operationId: ice-servers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ICEServer'
+            type: array
+      summary: Get ICE servers
       tags:
       - app
   /p2p-access:

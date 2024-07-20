@@ -175,6 +175,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/ice-servers": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app"
+                ],
+                "summary": "Get ICE servers",
+                "operationId": "ice-servers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ICEServer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/p2p-access": {
             "get": {
                 "security": [
@@ -501,6 +527,24 @@ const docTemplate = `{
                 "date": {
                     "type": "string",
                     "format": "date-time"
+                }
+            }
+        },
+        "ICEServer": {
+            "type": "object",
+            "properties": {
+                "credential": {},
+                "credentialType": {
+                    "type": "string"
+                },
+                "urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },

@@ -7,8 +7,10 @@ import (
 	"github.com/aicacia/ipcameras/api/app"
 	"github.com/aicacia/ipcameras/api/app/config"
 	"github.com/aicacia/ipcameras/api/app/model"
+	"github.com/aicacia/ipcameras/api/app/util"
 	"github.com/aicacia/ipcameras/api/docs"
 	"github.com/gofiber/fiber/v2"
+	_ "github.com/pion/webrtc/v4"
 )
 
 func GetOpenAPI(c *fiber.Ctx) error {
@@ -72,4 +74,18 @@ func GetP2PAccess(c *fiber.Ctx) error {
 		Id:       config.Get().P2P.Id,
 		Password: config.Get().P2P.Password,
 	})
+}
+
+// GetICEServers
+//
+//	@ID			  	ice-servers
+//	@Summary		Get ICE servers
+//	@Tags			  app
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}	model.ICEServerST
+//	@Router			/ice-servers [get]
+func GetICEServers(c *fiber.Ctx) error {
+	c.Status(http.StatusOK)
+	return c.JSON(util.Map(config.Get().GetWebRTCServers(), model.FromWebRTCIceServer))
 }

@@ -9,6 +9,7 @@ import (
 
 	atomic_value "github.com/aicacia/go-atomic-value"
 	"github.com/aicacia/ipcameras/api/app/util"
+	"github.com/pion/webrtc/v4"
 )
 
 var config atomic_value.AtomicValue[*ConfigST]
@@ -47,9 +48,23 @@ type P2PST struct {
 }
 
 type IceST struct {
-	Servers    []string `json:"servers"`
-	Username   string   `json:"username"`
-	Credential string   `json:"credential"`
+	Servers        []string    `json:"servers"`
+	Username       string      `json:"username"`
+	Credential     interface{} `json:"credential"`
+	CredentialType string      `json:"credentialType"`
+}
+
+func (ice *IceST) ToWebRTCServer() webrtc.ICEServer {
+	credentialType := webrtc.ICECredentialTypePassword
+	if ice.CredentialType == "oauth" {
+		credentialType = webrtc.ICECredentialTypeOauth
+	}
+	return webrtc.ICEServer{
+		URLs:           ice.Servers,
+		Username:       ice.Username,
+		Credential:     ice.Credential,
+		CredentialType: credentialType,
+	}
 }
 
 type RTSPST struct {
@@ -74,7 +89,7 @@ type ConfigST struct {
 	Users     UsersST     `json:"users"`
 	Discovery DiscoveryST `json:"discovery"`
 	P2P       P2PST       `json:"p2p"`
-	Ice       IceST       `json:"ice"`
+	Ice       []IceST     `json:"ice"`
 	RTSP      RTSPST      `json:"rtsp"`
 	JWT       JWTST       `json:"jwt"`
 }
@@ -93,6 +108,14 @@ func (config *ConfigST) GetP2PURL() string {
 		protocal = "https"
 	}
 	return fmt.Sprintf("%s://%s", protocal, config.P2P.Host)
+}
+
+func (config *ConfigST) GetWebRTCServers() []webrtc.ICEServer {
+	ice := make([]webrtc.ICEServer, 0, len(config.Ice))
+	for _, iceServer := range config.Ice {
+		ice = append(ice, iceServer.ToWebRTCServer())
+	}
+	return ice
 }
 
 func InitConfig(path string) error {
@@ -117,8 +140,10 @@ func InitConfig(path string) error {
 		Users: UsersST{
 			Path: "./data/users",
 		},
-		Ice: IceST{
-			Servers: []string{"stun:stun.l.google.com:19302"},
+		Ice: []IceST{
+			{
+				Servers: []string{"stun:stun.l.google.com:19302"},
+			},
 		},
 		Discovery: DiscoveryST{Enabled: true, RemoveTimeoutMilliseconds: 60000},
 		P2P: P2PST{
