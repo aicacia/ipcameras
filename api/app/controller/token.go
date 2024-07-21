@@ -8,7 +8,7 @@ import (
 	"github.com/aicacia/ipcameras/api/app/config"
 	"github.com/aicacia/ipcameras/api/app/jwt"
 	"github.com/aicacia/ipcameras/api/app/model"
-	"github.com/aicacia/ipcameras/api/app/repo"
+	"github.com/aicacia/ipcameras/api/app/service"
 	"github.com/aicacia/ipcameras/api/app/util"
 	"github.com/gofiber/fiber/v2"
 )
@@ -33,7 +33,7 @@ func PostToken(c *fiber.Ctx) error {
 		slog.Error("error parsing credentials", "error", err)
 		return model.NewError(http.StatusBadRequest).AddError("credentials", "invalid")
 	}
-	user, err := repo.GetUserByUsername(credentials.Username)
+	user, err := service.GetUserByUsername(credentials.Username)
 	if err != nil {
 		slog.Error("error getting user by username", "error", err)
 		return model.NewError(http.StatusBadRequest).AddError("credentials", "invalid")
@@ -52,7 +52,7 @@ func PostToken(c *fiber.Ctx) error {
 func sendToken(
 	c *fiber.Ctx,
 	issuedTokenType string,
-	user *repo.UserST,
+	user *service.UserST,
 ) error {
 	now := time.Now().UTC()
 	claims := jwt.Claims{

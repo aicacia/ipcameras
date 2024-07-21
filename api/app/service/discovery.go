@@ -51,10 +51,9 @@ func (d *DeviceST) Name() string {
 
 var Devices = cmap.New[string, *DeviceST]()
 
-func InitDiscovery() error {
+func InitDiscovery() {
 	ctx := context.Background()
 	go discovery(ctx)
-	return nil
 }
 
 func discovery(ctx context.Context) {
@@ -71,13 +70,13 @@ func discovery(ctx context.Context) {
 		}
 		interfaceNames, err := localInterfaceNames()
 		if err != nil {
-			slog.Error("error getting interfaces: %v\n", "error", err)
+			slog.Error("error getting interfaces", "error", err)
 		}
 		discoveredDevices := make(map[string]discoveryDeviceST, 0)
 		for _, interfaceName := range interfaceNames {
 			interfaceDevices, err := onvif.GetAvailableDevicesAtSpecificEthernetInterface(interfaceName)
 			if err != nil {
-				slog.Error("error getting devices: %v\n", "error", err)
+				slog.Error("error getting devices", "error", err)
 			}
 			if len(interfaceDevices) == 0 {
 				continue
@@ -87,7 +86,7 @@ func discovery(ctx context.Context) {
 				if info.HardwareId == "" {
 					deviceInfoResponse, err := devicesdk.Call_GetDeviceInformation(ctx, &device, onvifdevice.GetDeviceInformation{})
 					if err != nil {
-						slog.Error("error getting Device information: %v\n", "error", err)
+						slog.Error("error getting Device information", "error", err)
 						continue
 					}
 					info.Manufacturer = deviceInfoResponse.Manufacturer
@@ -106,13 +105,13 @@ func discovery(ctx context.Context) {
 				device = &DeviceST{Device: discoveredDevice.device, Info: discoveredDevice.info, MediaUris: map[string]xsdonvif.MediaUri{}}
 				profiles, err := mediasdk.Call_GetProfiles(ctx, &discoveredDevice.device, media.GetProfiles{})
 				if err != nil {
-					slog.Error("error: %v\n", "error", err)
+					slog.Error("error getting device profiles", "error", err)
 					continue
 				}
 				for _, profile := range profiles.Profiles {
 					streamUri, err := mediasdk.Call_GetStreamUri(ctx, &discoveredDevice.device, media.GetStreamUri{ProfileToken: profile.Token})
 					if err != nil {
-						slog.Error("error: %v\n", "error", err)
+						slog.Error("error getting device profile stream uri", "error", err)
 						continue
 					}
 					name := util.GetUniqueKey(device.MediaUris, string(profile.Name))
@@ -120,6 +119,12 @@ func discovery(ctx context.Context) {
 				}
 				Devices.Set(device.HardwareId(), device)
 				slog.Info("discovered device", "hardwareId", discoveredDevice.info.HardwareId)
+				camera, err := GetCameraByHardwareId(device.HardwareId())
+				if err != nil {
+					slog.Error("error getting camera", "error", err)
+					continue
+				}
+				onAddCamera(cameraFromDevice(camera, device))
 			} else {
 				slog.Debug("device already exists", "hardwareId", discoveredDevice.info.HardwareId)
 			}

@@ -8,7 +8,7 @@ import (
 	"github.com/aicacia/ipcameras/api/app/config"
 	"github.com/aicacia/ipcameras/api/app/jwt"
 	"github.com/aicacia/ipcameras/api/app/model"
-	"github.com/aicacia/ipcameras/api/app/repo"
+	"github.com/aicacia/ipcameras/api/app/service"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -26,7 +26,7 @@ func AuthorizedMiddleware() fiber.Handler {
 		if claims.Type != jwt.BearerTokenType {
 			return model.NewError(http.StatusUnauthorized).AddError("authorization", "invalid")
 		}
-		user, err := repo.GetUserByUsername(claims.Subject)
+		user, err := service.GetUserByUsername(claims.Subject)
 		if err != nil {
 			slog.Error("failed to fetch user", "error", err)
 			return model.NewError(http.StatusUnauthorized).AddError("authorization", "invalid")
@@ -42,9 +42,9 @@ func GetClaims(c *fiber.Ctx) *jwt.Claims {
 	return claims.(*jwt.Claims)
 }
 
-func GetUser(c *fiber.Ctx) *repo.UserST {
+func GetUser(c *fiber.Ctx) *service.UserST {
 	user := c.Locals(userLocalKey)
-	return user.(*repo.UserST)
+	return user.(*service.UserST)
 }
 
 func GetAuthorizationFromContext(c *fiber.Ctx) (string, string) {

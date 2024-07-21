@@ -153,7 +153,7 @@ type RootTranslation = {
 		 */
 		recordWindowLabel: string
 		/**
-		 * 1​h​,​3​0​d​,​ ​1​y​,​ ​e​t​c​.​.​.
+		 * 1​h​,​ ​3​0​d​,​ ​1​y​,​ ​e​t​c​.​.​.
 		 */
 		recordWindowPlaceholder: string
 		/**
@@ -330,7 +330,7 @@ export type TranslationFunctions = {
 		 */
 		recordWindowLabel: () => LocalizedString
 		/**
-		 * 1h,30d, 1y, etc...
+		 * 1h, 30d, 1y, etc...
 		 */
 		recordWindowPlaceholder: () => LocalizedString
 		/**

@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/aicacia/ipcameras/api/app/repo"
+	"github.com/aicacia/ipcameras/api/app/service"
 )
 
 type CameraST struct {
@@ -18,25 +18,25 @@ type CameraST struct {
 	UpdatedAt    time.Time         `json:"updatedAt" validate:"required" format:"date-time"`
 } // @name Camera
 
-func CameraFromRepo(repo *repo.CameraST) CameraST {
+func CameraFromService(c *service.CameraST) CameraST {
 	var recordWindow *int64
-	if repo.RecordWindow != nil {
-		value := int64(*repo.RecordWindow)
+	if c.RecordWindow != nil {
+		value := int64(*c.RecordWindow)
 		recordWindow = &value
 	}
 	return CameraST{
-		HardwareId:   repo.HardwareId,
-		Name:         repo.Name,
-		MediaUris:    repo.MediaUris,
-		Saved:        repo.Saved,
-		Record:       repo.Record,
+		HardwareId:   c.HardwareId,
+		Name:         c.Name,
+		MediaUris:    c.MediaUris,
+		Saved:        c.Saved,
+		Record:       c.Record,
 		RecordWindow: recordWindow,
-		Discovered:   repo.Discovered,
-		CreatedAt:    repo.CreatedAt,
-		UpdatedAt:    repo.UpdatedAt,
+		Discovered:   c.Discovered,
+		CreatedAt:    c.CreatedAt,
+		UpdatedAt:    c.UpdatedAt,
 	}
 }
 
 type UpsertCameraST struct {
-	repo.UpsertCameraST
+	service.UpsertCameraST
 } // @name UpsertCamera

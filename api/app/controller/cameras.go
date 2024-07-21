@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/aicacia/ipcameras/api/app/model"
-	"github.com/aicacia/ipcameras/api/app/repo"
+	"github.com/aicacia/ipcameras/api/app/service"
 	"github.com/aicacia/ipcameras/api/app/util"
 	"github.com/gofiber/fiber/v2"
 )
@@ -22,11 +22,11 @@ import (
 //
 //	@Security		Authorization
 func GetCameras(c *fiber.Ctx) error {
-	cameras, err := repo.GetCameras()
+	cameras, err := service.GetCameras()
 	if err != nil {
-		slog.Error("error getting cameras", "error")
+		slog.Error("error getting cameras", "error", err)
 	}
-	return c.JSON(util.Map(cameras, model.CameraFromRepo))
+	return c.JSON(util.Map(cameras, model.CameraFromService))
 }
 
 // GetCameraByHardwareId
@@ -43,14 +43,14 @@ func GetCameras(c *fiber.Ctx) error {
 //
 //	@Security		Authorization
 func GetCameraByHardwareId(c *fiber.Ctx) error {
-	camera, err := repo.GetCameraByHardwareId(c.Params("hardwareId"))
+	camera, err := service.GetCameraByHardwareId(c.Params("hardwareId"))
 	if err != nil {
 		slog.Error("error getting camera", "error", err)
 	}
 	if camera == nil {
 		return model.NewError(http.StatusNotFound).AddError("hardwareId", "invalid")
 	}
-	return c.JSON(model.CameraFromRepo(camera))
+	return c.JSON(model.CameraFromService(camera))
 }
 
 // PatchCameraByHardwareId
@@ -73,7 +73,7 @@ func PatchCameraByHardwareId(c *fiber.Ctx) error {
 		slog.Error("error parsing body", "error", err)
 		return model.NewError(http.StatusBadRequest).AddError("updates", "invalid")
 	}
-	updatedCamera, err := repo.UpsertCameraByHardwareId(c.Params("hardwareId"), body.UpsertCameraST)
+	updatedCamera, err := service.UpsertCameraByHardwareId(c.Params("hardwareId"), body.UpsertCameraST)
 	if err != nil {
 		slog.Error("error updating camera", "error", err)
 		return model.NewError(http.StatusInternalServerError).AddError("internal", "application")
@@ -81,5 +81,5 @@ func PatchCameraByHardwareId(c *fiber.Ctx) error {
 	if updatedCamera == nil {
 		return model.NewError(http.StatusNotFound).AddError("hardwareId", "invalid")
 	}
-	return c.JSON(model.CameraFromRepo(updatedCamera))
+	return c.JSON(model.CameraFromService(updatedCamera))
 }

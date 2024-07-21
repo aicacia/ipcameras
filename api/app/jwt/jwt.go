@@ -67,9 +67,8 @@ func ParseClaimsFromToken[C Claims](tokenString string, privateKey string) (*C, 
 			return nil, err
 		}
 		return &claims, nil
-	} else {
-		return nil, fmt.Errorf("invalid token")
 	}
+	return nil, fmt.Errorf("invalid token")
 }
 
 func ParseClaimsFromTokenNoValidation[C Claims](tokenString string) (*C, error) {

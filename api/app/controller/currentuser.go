@@ -7,7 +7,7 @@ import (
 
 	"github.com/aicacia/ipcameras/api/app/middleware"
 	"github.com/aicacia/ipcameras/api/app/model"
-	"github.com/aicacia/ipcameras/api/app/repo"
+	"github.com/aicacia/ipcameras/api/app/service"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -28,7 +28,7 @@ import (
 //	@Security		Authorization
 func GetCurrentUser(c *fiber.Ctx) error {
 	user := middleware.GetUser(c)
-	return c.JSON(model.UserFromRepo(user))
+	return c.JSON(model.UserFromService(user))
 }
 
 // PatchResetPassword
@@ -63,7 +63,7 @@ func PatchResetPassword(c *fiber.Ctx) error {
 		return errors
 	}
 	user := middleware.GetUser(c)
-	_, err := repo.UpdateUserPassword(user.Username, password)
+	_, err := service.UpdateUserPassword(user.Username, password)
 	if err != nil {
 		slog.Error("failed to update user password", "error", err)
 		return model.NewError(http.StatusInternalServerError).AddError("internal", "application")

@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/aicacia/ipcameras/api/app/repo"
+	"github.com/aicacia/ipcameras/api/app/service"
 )
 
 type UserST struct {
@@ -12,11 +12,11 @@ type UserST struct {
 	UpdatedAt time.Time `json:"updatedAt" validate:"required" format:"date-time"`
 } // @name User
 
-func UserFromRepo(repo *repo.UserST) UserST {
+func UserFromService(u *service.UserST) UserST {
 	return UserST{
-		Username:  repo.Username,
-		CreatedAt: repo.CreatedAt,
-		UpdatedAt: repo.UpdatedAt,
+		Username:  u.Username,
+		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
 	}
 }
 

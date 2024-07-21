@@ -2,7 +2,6 @@ package service
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,17 +25,15 @@ type PeerOnConnect = func(id, kind string, p *peer.Peer)
 var peers = cmap.New[string, *peer.Peer]()
 var PeersOnConnect = cslice.New[PeerOnConnect]()
 
-func InitPeerListener() error {
-	ctx := context.Background()
-	go peerListener(ctx)
-	return nil
+func InitPeerListener() {
+	go peerListener()
 }
 
-func peerListener(ctx context.Context) {
+func peerListener() {
 	defer func() {
 		if err := recover(); err != nil {
 			slog.Error("peerListener panic", "error", err)
-			go peerListener(ctx)
+			go peerListener()
 		}
 	}()
 	for {
@@ -57,7 +54,10 @@ func peerListener(ctx context.Context) {
 			err := websocket.JSON.Receive(conn, &msg)
 			if err != nil {
 				slog.Error("failed to receive message", "error", err)
-				break
+				if errors.Is(err, io.EOF) {
+					break
+				}
+				continue
 			}
 			switch msg["type"].(string) {
 			case "join":

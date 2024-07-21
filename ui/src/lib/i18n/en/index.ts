@@ -44,7 +44,7 @@ const en = {
 		namePlaceholder: 'Name',
 		recordLabel: 'Record',
 		recordWindowLabel: 'Record Window',
-		recordWindowPlaceholder: '1h,30d, 1y, etc...',
+		recordWindowPlaceholder: '1h, 30d, 1y, etc...',
 		save: 'Save'
 	},
 	header: {

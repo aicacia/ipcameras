@@ -1,4 +1,4 @@
-package repo
+package service
 
 import (
 	"encoding/json"
@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/aicacia/ipcameras/api/app/config"
-	"github.com/aicacia/ipcameras/api/app/service"
 	"github.com/aicacia/ipcameras/api/app/util"
 )
 
@@ -24,54 +23,45 @@ type CameraST struct {
 	RecordWindow *time.Duration    `json:"recordWindow" validate:"required"`
 	CreatedAt    *time.Time        `json:"createdAt" format:"date-time"`
 	UpdatedAt    time.Time         `json:"updatedAt" validate:"required" format:"date-time"`
-	Device       *service.DeviceST `json:"-"`
+	Device       *DeviceST         `json:"-"`
 }
 
 func GetCameras() ([]*CameraST, error) {
-	var errs []error
 	cameras, err := readCameras()
-	if err != nil {
-		errs = append(errs, err)
+	for device := range Devices.Values() {
+		hardwareId := device.HardwareId()
+		camera := cameras[hardwareId]
+		cameras[hardwareId] = cameraFromDevice(camera, device)
 	}
-	for device := range service.Devices.Values() {
-		camera, ok := cameras[device.HardwareId()]
-		if !ok {
-			camera = &CameraST{
-				HardwareId: device.HardwareId(),
-				Name:       device.Name(),
-				MediaUris:  map[string]string{},
-			}
-			cameras[camera.HardwareId] = camera
-		}
-		camera.Device = device
-		for name, mediaUri := range device.MediaUris {
-			camera.MediaUris[name] = string(mediaUri.Uri)
-		}
-		camera.UpdatedAt = device.LastSeen
-		camera.Discovered = true
-	}
-	return util.Values(cameras), errors.Join(errs...)
+	return util.Values(cameras), err
 }
 
 func GetCameraByHardwareId(hardwareId string) (*CameraST, error) {
 	camera, cameraDiskErr := readCamera(hardwareId)
-	device, deviceExists := service.Devices.Get(hardwareId)
+	device, deviceExists := Devices.Get(hardwareId)
 	if deviceExists {
-		if camera == nil {
-			camera = &CameraST{
-				MediaUris: map[string]string{},
-			}
-		}
-		camera.HardwareId = device.HardwareId()
-		camera.Name = device.Name()
-		camera.Device = device
-		for name, mediaUri := range device.MediaUris {
-			camera.MediaUris[name] = string(mediaUri.Uri)
-		}
-		camera.UpdatedAt = device.LastSeen
-		camera.Discovered = true
+		camera = cameraFromDevice(camera, device)
 	}
 	return camera, cameraDiskErr
+}
+
+func cameraFromDevice(camera *CameraST, device *DeviceST) *CameraST {
+	if camera == nil {
+		camera = &CameraST{
+			MediaUris: map[string]string{},
+		}
+	}
+	camera.HardwareId = device.HardwareId()
+	if camera.Name == "" {
+		camera.Name = device.Name()
+	}
+	camera.Device = device
+	for name, mediaUri := range device.MediaUris {
+		camera.MediaUris[name] = string(mediaUri.Uri)
+	}
+	camera.UpdatedAt = device.LastSeen
+	camera.Discovered = true
+	return camera
 }
 
 type UpsertCameraST struct {
@@ -83,11 +73,15 @@ type UpsertCameraST struct {
 }
 
 func UpsertCameraByHardwareId(hardwareId string, update UpsertCameraST) (*CameraST, error) {
-	camera, _ := GetCameraByHardwareId(update.HardwareId)
-	if camera == nil {
+	prevCamera, _ := GetCameraByHardwareId(update.HardwareId)
+	var camera *CameraST
+	if prevCamera == nil {
 		camera = &CameraST{
 			MediaUris: map[string]string{},
 		}
+	} else {
+		tmp := *prevCamera
+		camera = &tmp
 	}
 	for name, mediaUri := range update.MediaUris {
 		camera.MediaUris[name] = mediaUri
@@ -106,13 +100,27 @@ func UpsertCameraByHardwareId(hardwareId string, update UpsertCameraST) (*Camera
 	if err := writeCamera(camera); err != nil {
 		return nil, err
 	}
+	if prevCamera == nil {
+		onAddCamera(camera)
+	} else {
+		onUpdateCamera(camera, prevCamera)
+	}
 	return camera, nil
+}
+
+func DeleteCameraByHardwareId(hardwareId string) error {
+	camera, _ := GetCameraByHardwareId(hardwareId)
+	if err := deleteCamera(camera); err != nil {
+		return err
+	}
+	onDeleteCamera(camera)
+	return nil
 }
 
 func readCameras() (map[string]*CameraST, error) {
 	entries, err := os.ReadDir(config.Get().Cameras.Path)
 	if err != nil {
-		return nil, err
+		return make(map[string]*CameraST), err
 	}
 	cameras := make(map[string]*CameraST, len(entries))
 	var errs []error
@@ -161,4 +169,12 @@ func writeCamera(camera *CameraST) error {
 		return err
 	}
 	return os.WriteFile(path.Join(config.Get().Cameras.Path, fmt.Sprintf("%s.json", camera.HardwareId)), cameraBytes, os.ModePerm)
+}
+
+func deleteCamera(camera *CameraST) error {
+	err := os.MkdirAll(config.Get().Cameras.Path, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return os.Remove(path.Join(config.Get().Cameras.Path, fmt.Sprintf("%s.json", camera.HardwareId)))
 }

@@ -113,9 +113,8 @@ func clientSetReady(url string) {
 func clientIsClosed(url string) bool {
 	if client, ok := clients.Get(url); ok && client != nil {
 		return client.closed.Load()
-	} else {
-		return true
 	}
+	return true
 }
 
 func clientCodecsSet(url string, codecs []av.CodecData) {
@@ -246,7 +245,7 @@ func rtspWorkerLoop(url string) {
 }
 
 func rtspWorker(url string) (bool, error) {
-	rtsp_client, err := rtspv2.Dial(rtspv2.RTSPClientOptions{
+	rtspClient, err := rtspv2.Dial(rtspv2.RTSPClientOptions{
 		URL:              url,
 		DisableAudio:     false,
 		DialTimeout:      time.Duration(config.Get().RTSP.ConnectTimeoutSeconds) * time.Second,
@@ -256,11 +255,11 @@ func rtspWorker(url string) (bool, error) {
 	if err != nil {
 		return true, err
 	}
-	defer rtsp_client.Close()
+	defer rtspClient.Close()
 
-	if rtsp_client.CodecData != nil {
-		slog.Debug("RTSP worker Codecs", "url", url, "codecs", len(rtsp_client.CodecData))
-		clientCodecsSet(url, rtsp_client.CodecData)
+	if rtspClient.CodecData != nil {
+		slog.Debug("RTSP worker Codecs", "url", url, "codecs", len(rtspClient.CodecData))
+		clientCodecsSet(url, rtspClient.CodecData)
 	}
 	client, ok := clients.Get(url)
 	if !ok || client == nil || client.closed.Load() {
@@ -277,16 +276,16 @@ func rtspWorker(url string) (bool, error) {
 				clientClose(url)
 				return true, nil
 			}
-		case signals := <-rtsp_client.Signals:
+		case signals := <-rtspClient.Signals:
 			switch signals {
 			case rtspv2.SignalCodecUpdate:
-				slog.Debug("RTSP worker rtspv2.SignalCodecUpdate Codecs", "url", url, "codecs", len(rtsp_client.CodecData))
-				clientCodecsSet(url, rtsp_client.CodecData)
+				slog.Debug("RTSP worker rtspv2.SignalCodecUpdate Codecs", "url", url, "codecs", len(rtspClient.CodecData))
+				clientCodecsSet(url, rtspClient.CodecData)
 			case rtspv2.SignalStreamRTPStop:
 				slog.Debug("RTSP worker rtspv2.SignalClientRTPStop", "url", url)
 				return false, ErrClientExitDisconnect
 			}
-		case packetAV := <-rtsp_client.OutgoingPacketQueue:
+		case packetAV := <-rtspClient.OutgoingPacketQueue:
 			packetAV.Time = time.Duration(time.Now().UTC().UnixNano())
 			cast(url, packetAV)
 		}

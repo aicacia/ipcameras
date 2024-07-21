@@ -3,9 +3,15 @@ package util
 import (
 	"fmt"
 	"regexp"
+	"time"
 )
 
 var NumericRegex = regexp.MustCompile(`\D+`)
+
+type TimeRangeST struct {
+	Start time.Time
+	End   *time.Time
+}
 
 func Map[T, U any](ts []T, f func(T) U) []U {
 	us := make([]U, len(ts))
@@ -54,4 +60,8 @@ func UniqueSlice[T comparable](inputSlice []T) []T {
 		}
 	}
 	return uniqueSlice
+}
+
+func TruncateToMinute(t time.Time) time.Time {
+	return time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, t.Location())
 }

@@ -4,6 +4,8 @@ go 1.22
 
 toolchain go1.22.0
 
+replace github.com/deepch/vdk => github.com/nathanfaucett/vdk v0.0.0-20240721121137-f5feb12f7a6c
+
 require (
 	github.com/aicacia/go-atomic-value v0.0.0-20240711090356-37ccff13e4eb
 	github.com/aicacia/go-cmap v0.0.0-20240420172349-4aaf998b89ef

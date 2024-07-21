@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"log/slog"
+	"os"
 	"time"
 
 	"github.com/aicacia/ipcameras/api/app"
@@ -40,9 +40,8 @@ var args struct {
 // @name X-Timezone
 func main() {
 	defer func() {
-		rec := recover()
-		if rec != nil {
-			log.Fatalf("application panic: %v\n", rec)
+		if err := recover(); err != nil {
+			slog.Error("application panic", "error", err)
 		}
 	}()
 	arg.MustParse(&args)
@@ -51,10 +50,14 @@ func main() {
 		Version:    Version,
 		Build:      Build,
 	})
+	if fiberApp == nil {
+		slog.Error("failed to initialize app")
+		os.Exit(1)
+	}
 	router.InstallRouter(fiberApp)
 
 	addr := fmt.Sprintf("%s:%d", config.Get().Host, config.Get().Port)
-	slog.Info("Listening on %s\n", "addr", addr)
+	slog.Info("Listening", "addr", addr)
 
-	log.Fatal(fiberApp.Listen(addr))
+	slog.Error("fiber exit", "error", fiberApp.Listen(addr))
 }

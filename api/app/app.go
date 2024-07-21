@@ -2,7 +2,6 @@ package app
 
 import (
 	"errors"
-	"log"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -10,7 +9,6 @@ import (
 
 	"github.com/aicacia/ipcameras/api/app/config"
 	"github.com/aicacia/ipcameras/api/app/model"
-	"github.com/aicacia/ipcameras/api/app/repo"
 	"github.com/aicacia/ipcameras/api/app/service"
 	"github.com/aicacia/ipcameras/api/docs"
 	"github.com/gofiber/fiber/v2"
@@ -35,13 +33,12 @@ func InitApp(appConfig AppConfigST) *fiber.App {
 		envs = append(envs, ".env."+env)
 	}
 	envs = append(envs, ".env")
-	err := godotenv.Load(envs...)
-	if err != nil {
-		log.Printf("error loading .env file: %v\n", err)
+	if err := godotenv.Load(envs...); err != nil {
+		slog.Error("error loading .env file", "error", err)
 	}
-	err = config.InitConfig(appConfig.ConfigPath)
-	if err != nil {
-		log.Fatalf("error initializing config: %v\n", err)
+	if err := config.InitConfig(appConfig.ConfigPath); err != nil {
+		slog.Error("error initializing config", "error", err)
+		return nil
 	}
 
 	loggerWriter := os.Stdout
@@ -50,14 +47,12 @@ func InitApp(appConfig AppConfigST) *fiber.App {
 	}))
 	slog.SetDefault(logger)
 
-	err = service.InitDiscovery()
-	if err != nil {
-		log.Fatalf("error initializing discovery: %v\n", err)
+	if err := service.InitUsers(); err != nil {
+		slog.Error("error initializing users", "error", err)
+		return nil
 	}
-	err = repo.InitUsers()
-	if err != nil {
-		log.Fatalf("error initializing users: %v\n", err)
-	}
+	service.InitDiscovery()
+	service.InitRecord()
 
 	Version.Version = appConfig.Version
 	Version.Build = appConfig.Build
@@ -65,7 +60,8 @@ func InitApp(appConfig AppConfigST) *fiber.App {
 	docs.SwaggerInfo.Version = appConfig.Version
 	uri, err := url.Parse(config.Get().URL)
 	if err != nil {
-		log.Fatalf("error parsing URI: %v\n", err)
+		slog.Error("error parsing URI", "error", err)
+		return nil
 	}
 	docs.SwaggerInfo.Host = uri.Host
 
@@ -89,10 +85,7 @@ func InitApp(appConfig AppConfigST) *fiber.App {
 	if config.Get().Dashboard.Enabled {
 		fiberApp.Use("/dashboard", monitor.New())
 	}
-	err = service.InitPeerListener()
-	if err != nil {
-		log.Fatalf("error initializing Peer Listener: %v\n", err)
-	}
+	service.InitPeerListener()
 	service.InitRTSP()
 	service.InitWebRTCServer(fiberApp)
 
